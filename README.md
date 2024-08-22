@@ -2,7 +2,7 @@
 Practica 1 del Laboratorio del Curso de Seminario de Sistemas 1
 | Curso                   | Sección   |
 |-------------------------|-----------|
-|Seminario de Sistemas I	|B          |           
+|Seminario de Sistemas I	|A          |           
 ### Integrantes 
 | # | Nombre                                 | Carnet    |
 |---|----------------------------------------|-----------|
