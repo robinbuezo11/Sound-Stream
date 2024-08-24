@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = ({ onLogin }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate(); // Hook para redireccionar
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const isAuthenticated = email === 'admin@sound-stream.com' && password === 'admin';
         if (isAuthenticated) {
-            onLogin(true);
+            onLogin(true); // Llama a onLogin con el estado de autenticación
+            navigate('/User');
         } else {
             alert('Credenciales incorrectas');
         }
@@ -44,13 +46,13 @@ const Login = ({ onLogin }) => {
                                     required 
                                     className="w-full px-4 py-2 border rounded-lg pr-10 focus:outline-none focus:ring-2 focus:ring-primary"
                                 />
-                                <button
+                                <label
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)} // Alternar visibilidad de la contraseña
-                                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
                                 >
                                     {showPassword ? <FaEyeSlash className="text-gray-500" /> : <FaEye className="text-gray-500" />}
-                                </button>
+                                </label>
                             </div>
                         </div>
                         <button 
