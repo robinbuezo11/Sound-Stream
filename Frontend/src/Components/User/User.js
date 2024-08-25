@@ -7,6 +7,7 @@ import { FaMusic } from 'react-icons/fa';
 import { FaCompactDisc } from 'react-icons/fa';
 import { FaHistory } from 'react-icons/fa';
 import { FaUserAlt } from 'react-icons/fa';
+import { FaBackward, FaPlay, FaForward, FaVolumeUp } from 'react-icons/fa';
 
 import { IoIosRadio } from 'react-icons/io'; 
 import { SlEarphones } from 'react-icons/sl';
@@ -43,6 +44,8 @@ const crudalbum =[
 
 
 const User = () => {
+    const currentTime = '01:23';
+    const duration = '03:45';
     return (
         <div className="flex flex-col h-screen">
             <div className="flex flex-1 overflow-hidden">
@@ -110,10 +113,34 @@ const User = () => {
                     {/* Contenido del panel principal */}
                 </div>
             </div>
-            <div className="bg-gray-300 p-2 text-gray-700 fixed bottom-0 w-full" style={{ height: '5.5rem' }}>
-                {/* Contenido del reproductor */}
-            </div>
+            <div className="flex flex-col items-center space-y-2 p-6 bg-gray-200 text-gray-700 overflow-y-auto custom-scrollbar">
+    <div className="flex items-center space-x-4 mb-2">
+        <button className="p-2">
+            <FaBackward className="text-2xl" />
+        </button>
+        <button className="p-2">
+            <FaPlay className="text-2xl" />
+        </button>
+        <button className="p-2">
+            <FaForward className="text-2xl" />
+        </button>
+        <div className="flex items-center space-x-2">
+            <FaVolumeUp className="text-2xl" />
+            <input type="range" min="0" max="100" className="w-24 custom-range bg-gray-400 rounded-lg appearance-none cursor-pointer" />
         </div>
+    </div>
+    <div className="flex items-center space-x-2 mb-2">
+        <span className="text-sm">{currentTime}</span>
+        <input type="range" min="0" max="100" className="w-64 custom-range bg-gray-400 rounded-lg appearance-none cursor-pointer" />
+        <span className="text-sm">{duration}</span>
+    </div>
+    <div>
+        <span className="text-sm font-medium">Reproduciendo: Canción Ejemplo</span>
+    </div>
+</div>
+
+            </div>
+
     );
 };
 
