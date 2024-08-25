@@ -1,6 +1,13 @@
 import React from 'react';
 // import { IoMdHome } from 'react-icons/io';
-import { FaHeart } from 'react-icons/fa';
+import { FaHome } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
+import { FaUser } from 'react-icons/fa';
+import { FaMusic } from 'react-icons/fa';
+import { FaCompactDisc } from 'react-icons/fa';
+import { FaHistory } from 'react-icons/fa';
+import { FaUserAlt } from 'react-icons/fa';
+
 import { IoIosRadio } from 'react-icons/io'; 
 import { SlEarphones } from 'react-icons/sl';
 import '../../Utils/Scroll.css';
@@ -16,9 +23,24 @@ const playlists = [
 ];
 
 const options = [
-    { name: 'Favoritos', icon: <FaHeart className="text-xl text-white" />, bgColor: 'bg-purple-500' },
+    { name: 'Inicio', icon: <FaHome className="text-xl text-white" />, bgColor: 'bg-purple-500' },
+    { name: 'Buscar', icon: <FaSearch className="text-xl text-white" />, bgColor: 'bg-green-500' },
+    { name: 'Perfil', icon: <FaUser className="text-xl text-white" />, bgColor: 'bg-green-500' },
     { name: 'Radio', icon: <IoIosRadio className="text-xl text-white" />, bgColor: 'bg-green-500' },
 ];
+const historico =[
+    { name: 'Canciones más reproducidas', icon: <FaMusic className="text-xl text-white" />, bgColor: 'bg-purple-500' },
+    { name: 'Artistas más reproducidos', icon: <FaMusic className="text-xl text-white" />, bgColor: 'bg-purple-500' },
+    { name: 'Álbumes más reproducidos', icon: <FaCompactDisc className="text-xl text-white" />, bgColor: 'bg-purple-500' },
+    { name: 'Mi historial', icon: <FaHistory className="text-xl text-white" />, bgColor: 'bg-purple-500' },
+]
+
+const crudalbum =[
+    { name: 'CRUD Artista', icon: <FaUserAlt className="text-xl text-white" />, bgColor: 'bg-purple-500' },
+    { name: 'CRUD Álbum', icon: <FaCompactDisc className="text-xl text-white" />, bgColor: 'bg-purple-500' },
+    { name: 'CRUD Canción', icon: <FaMusic className="text-xl text-white" />, bgColor: 'bg-purple-500' },
+]
+
 
 const User = () => {
     return (
@@ -43,6 +65,28 @@ const User = () => {
                             ))}
                         </div>
                     </div>
+                    <h3 className="text-xl font-bold mb-2">Historico</h3>
+                    <div className="space-y-1">
+                            {historico.map((option, index) => (
+                                <div key={index} className="bg-gray-200 p-2 rounded-lg flex items-center space-x-2 cursor-pointer">
+                                    <div className={`${option.bgColor} w-11 h-11 flex items-center justify-center rounded`}>
+                                        {option.icon}
+                                    </div>
+                                    <span className="text-xl">{option.name}</span>
+                                </div>
+                            ))}
+                        </div>
+                    <h3 className="text-xl font-bold mb-2">Funcionalidades CRUD</h3>
+                    <div className="space-y-1">
+                            {crudalbum.map((option, index) => (
+                                <div key={index} className="bg-gray-200 p-2 rounded-lg flex items-center space-x-2 cursor-pointer">
+                                    <div className={`${option.bgColor} w-11 h-11 flex items-center justify-center rounded`}>
+                                        {option.icon}
+                                    </div>
+                                    <span className="text-xl">{option.name}</span>
+                                </div>
+                            ))}
+                        </div>                    
                     <h3 className="text-xl font-bold mb-2">Playlists</h3>
                     <div className="overflow-y-auto pb-4 custom-scrollbar" style={{ maxHeight: 'calc(100vh - 20rem)' }}>
                         <div className="space-y-1">
