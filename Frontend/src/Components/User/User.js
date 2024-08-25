@@ -126,12 +126,12 @@ const User = () => {
         </button>
         <div className="flex items-center space-x-2">
             <FaVolumeUp className="text-2xl" />
-            <input type="range" min="0" max="100" className="w-24 custom-range bg-gray-400 rounded-lg appearance-none cursor-pointer" />
+            <input type="range" min="0" max="100" className="w-24 h-1.5 bg-gray-400 rounded-lg appearance-none cursor-pointer" />
         </div>
     </div>
     <div className="flex items-center space-x-2 mb-2">
         <span className="text-sm">{currentTime}</span>
-        <input type="range" min="0" max="100" className="w-64 custom-range bg-gray-400 rounded-lg appearance-none cursor-pointer" />
+        <input type="range" min="0" max="100" className="w-64 h-1.5 bg-gray-400 rounded-lg appearance-none cursor-pointer" />
         <span className="text-sm">{duration}</span>
     </div>
     <div>
