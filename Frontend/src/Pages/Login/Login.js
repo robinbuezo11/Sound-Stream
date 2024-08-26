@@ -7,18 +7,25 @@ const Login = ({ onLogin }) => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate(); // Hook para redireccionar
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        const isAuthenticated = email === 'admin@sound-stream.com' && password === 'admin';
-        if (isAuthenticated) {
+        
+        // Verificar si el usuario es "admin"
+        const isAdminAuthenticated = email === 'admin@sound-stream.com' && password === 'admin';
+        
+        // Verificar si el usuario es "grupo15"
+        const isUserAuthenticated = email === 'grupo15@gmail.com' && password === 'grupo15';
+    
+        if (isAdminAuthenticated) {
             onLogin(true); // Llama a onLogin con el estado de autenticación
             navigate('/User');
+        } else if (isUserAuthenticated) {
+            onLogin(true); // Llama a onLogin con el estado de autenticación
+            navigate('/AdminPanel');
         } else {
             alert('Credenciales incorrectas');
         }
     };
-
     return (
         <div className="flex items-center justify-center min-h-screen bg-background">
             <div className="flex max-w-4xl bg-white shadow-md rounded-lg">
