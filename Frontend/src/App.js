@@ -5,7 +5,6 @@ import Signup from './Pages/Signup/Signup';
 import User from './Pages/User/User';
 
 function App() {
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const handleLogin = (status) => {
       setIsAuthenticated(status);

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { FaCheck, FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaCheck, FaTimes, FaEye, FaEyeSlash, FaCalendarAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { isDarkMode } from '../../Utils/DarkMode';
 
 const Signup = () => {
     const [firstName, setFirstName] = useState('');
@@ -12,6 +13,21 @@ const Signup = () => {
     const [profilePic, setProfilePic] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
     const [isMatch, setIsMatch] = useState(null);
+    const [darkMode, setDarkMode] = useState(isDarkMode()); // Estado para el modo oscuro
+
+    useEffect(() => {
+        // Actualiza el estado cuando cambian las preferencias del sistema
+        const darkModeListener = window.matchMedia('(prefers-color-scheme: dark)');
+        darkModeListener.addEventListener('change', (e) => {
+            setDarkMode(e.matches);
+        });
+
+        return () => {
+            darkModeListener.removeEventListener('change', (e) => {
+                setDarkMode(e.matches);
+            });
+        };
+    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -29,61 +45,82 @@ const Signup = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-background">
-            <div className="flex max-w-6xl bg-white shadow-md rounded-lg">
+        <div className={`flex items-center justify-center min-h-screen ${darkMode ? 'bg-mainBackground' : 'bg-background'}`}>
+            <div className={`flex max-w-6xl ${darkMode ? 'bg-secondaryBackground' : 'bg-white'} shadow-md rounded-lg`}>
                 {/* Formulario de registro a la izquierda */}
                 <div className="p-12 w-full max-w-2xl min-h-[700px] flex flex-col justify-center">
-                    <h1 className="text-3xl font-bold text-center mb-6 text-text">¡Hola, Regístrate en Sound Stream!</h1>
+                    <h1 className={`text-3xl font-bold text-center mb-6 ${darkMode ? 'text-colorText' : 'text-text'}`}>
+                        ¡Hola, Regístrate en Sound Stream!
+                    </h1>
                     <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="col-span-1">
-                            <label className="block text-gray-700 mb-2">Nombres:</label>
+                            <label className={`block ${darkMode ? 'text-colorText' : 'text-gray-700'} mb-2`}>
+                                Nombres:
+                            </label>
                             <input 
                                 type="text" 
                                 value={firstName} 
                                 onChange={(e) => setFirstName(e.target.value)} 
                                 required 
-                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${darkMode ? 'bg-inputBackground text-colorText border-border' : ''}`}
                             />
                         </div>
                         <div className="col-span-1">
-                            <label className="block text-gray-700 mb-2">Apellidos:</label>
+                            <label className={`block ${darkMode ? 'text-colorText' : 'text-gray-700'} mb-2`}>
+                                Apellidos:
+                            </label>
                             <input 
                                 type="text" 
                                 value={lastName} 
                                 onChange={(e) => setLastName(e.target.value)} 
                                 required 
-                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${darkMode ? 'bg-inputBackground text-colorText border-border' : ''}`}
                             />
                         </div>
                         <div className="col-span-1">
-                            <label className="block text-gray-700 mb-2">Email:</label>
+                            <label className={`block ${darkMode ? 'text-colorText' : 'text-gray-700'} mb-2`}>
+                                Email:
+                            </label>
                             <input 
                                 type="email" 
                                 value={email} 
                                 onChange={(e) => setEmail(e.target.value)} 
                                 required 
-                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${darkMode ? 'bg-inputBackground text-colorText border-border' : ''}`}
                             />
                         </div>
                         <div className="col-span-1">
-                            <label className="block text-gray-700 mb-2">Fecha de Nacimiento:</label>
-                            <input 
-                                type="date" 
-                                value={dob} 
-                                onChange={(e) => setDob(e.target.value)} 
-                                required 
-                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                            />
+                            <label className={`block ${darkMode ? 'text-colorText' : 'text-gray-700'} mb-2`}>
+                                Fecha de Nacimiento:
+                            </label>
+                            <div className="relative">
+                                <input 
+                                    type="date" 
+                                    value={dob} 
+                                    onChange={(e) => setDob(e.target.value)} 
+                                    required 
+                                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${darkMode ? 'bg-inputBackground text-colorText border-border' : ''}`}
+                                    id="dobInput"
+                                />
+                                <div 
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                                    onClick={() => document.getElementById('dobInput').focus()}
+                                >
+                                    <FaCalendarAlt className="text-gray-500" />
+                                </div>
+                            </div>
                         </div>
                         <div className="col-span-1">
-                            <label className="block text-gray-700 mb-2">Contraseña:</label>
+                            <label className={`block ${darkMode ? 'text-colorText' : 'text-gray-700'} mb-2`}>
+                                Contraseña:
+                            </label>
                             <div className="relative">
                                 <input 
                                     type={showPassword ? 'text' : 'password'} // Mostrar u ocultar contraseña
                                     value={password} 
                                     onChange={(e) => setPassword(e.target.value)} 
                                     required 
-                                    className="w-full px-4 py-2 border rounded-lg pr-10 focus:outline-none focus:ring-2 focus:ring-primary"
+                                    className={`w-full px-4 py-2 border rounded-lg pr-10 focus:outline-none focus:ring-2 focus:ring-primary ${darkMode ? 'bg-inputBackground text-colorText border-border' : ''}`}
                                 />
                                 <div
                                     type="button"
@@ -95,14 +132,16 @@ const Signup = () => {
                             </div>
                         </div>
                         <div className="col-span-1">
-                            <label className="block text-gray-700 mb-2">Confirmar Contraseña:</label>
+                            <label className={`block ${darkMode ? 'text-colorText' : 'text-gray-700'} mb-2`}>
+                                Confirmar Contraseña:
+                            </label>
                             <div className="relative">
                                 <input 
-                                    type={'password'}
+                                    type="password"
                                     value={confirmPassword}
                                     onChange={handleConfirmPasswordChange} 
                                     required 
-                                    className="w-full px-4 py-2 border rounded-lg pr-10 focus:outline-none focus:ring-2 focus:ring-primary"
+                                    className={`w-full px-4 py-2 border rounded-lg pr-10 focus:outline-none focus:ring-2 focus:ring-primary ${darkMode ? 'bg-inputBackground text-colorText border-border' : ''}`}
                                 />
                                 {/* Solo mostrar el ícono si confirmPassword no está vacío */}
                                 {confirmPassword && (
@@ -120,7 +159,9 @@ const Signup = () => {
                             </div>
                         </div>
                         <div className="col-span-2">
-                            <label className="block text-gray-700 mb-2">Foto de Perfil:</label>
+                            <label className={`block ${darkMode ? 'text-colorText' : 'text-gray-700'} mb-2`}>
+                                Foto de Perfil:
+                            </label>
                             <div className="relative">
                                 <input 
                                     type="file" 
@@ -128,7 +169,7 @@ const Signup = () => {
                                     onChange={(e) => setProfilePic(e.target.files[0])} 
                                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                 />
-                                <label htmlFor="profilePic" className="w-full px-4 py-2 border rounded-lg bg-gray-200 text-gray-700 flex items-center justify-center cursor-pointer hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-primary">
+                                <label htmlFor="profilePic" className={`w-full px-4 py-2 border rounded-lg bg-gray-200 text-gray-700 flex items-center justify-center cursor-pointer hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-primary ${darkMode ? 'bg-inputBackground text-colorText border-border' : ''}`}>
                                     {profilePic ? profilePic.name : 'Selecciona una foto'}
                                 </label>
                             </div>
@@ -143,7 +184,9 @@ const Signup = () => {
                         </div>
                     </form>
                     <div className="mt-4 text-center">
-                        <p className="text-gray-600">¿Ya tiénes una cuenta? <Link to="/" className="font-bold hover:underline">Inicia Sesión aquí</Link></p>
+                        <p className={` ${darkMode ? 'text-colorText' : 'text-gray-600'}`}>
+                            ¿Ya tienes una cuenta? <Link to="/" className="font-bold hover:underline">Inicia Sesión aquí</Link>
+                        </p>
                     </div>
                 </div>
 
