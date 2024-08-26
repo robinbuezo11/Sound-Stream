@@ -91,7 +91,6 @@ const User = () => {
                             ))}
                         </div>                    
                     <h3 className="text-xl font-bold mb-2">Playlists</h3>
-                    <div className="overflow-y-auto pb-4 custom-scrollbar" style={{ maxHeight: 'calc(100vh - 20rem)' }}>
                         <div className="space-y-1">
                             {playlists.map((playlist, index) => (
                                 <div key={index} className={`bg-gray-200 p-2 rounded-lg flex items-center space-x-2 cursor-pointer ${index === playlists.length - 1 ? 'mb-4' : ''}`}>
@@ -107,7 +106,6 @@ const User = () => {
                                 </div>
                             ))}
                         </div>
-                    </div>
                 </div>
                 <div className="flex-1 bg-background p-4 text-gray-700 overflow-y-auto">
                     {/* Contenido del panel principal */}
