@@ -66,7 +66,7 @@ const Menu = () => {
                             className="w-11 h-11 object-cover rounded" />
                         <div>
                             <h4 className="text-base font-semibold">{playlist.name}</h4>
-                            <p className={`text-sm ${darkMode ? 'text-colorText' : 'text-gray-600'}`}>Canciones: {playlist.songCount}</p>
+                            <p className={`text-sm text-gray-500 `}>Canciones: {playlist.songCount}</p>
                         </div>
                     </div>
                 ))}

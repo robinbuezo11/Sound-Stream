@@ -28,7 +28,7 @@ const User = () => {
                 <div className={`p-6 ${darkMode ? 'bg-secondaryBackground text-colorText' : 'bg-gray-200 text-gray-700'} overflow-y-auto custom-scrollbar`} style={{ width: '20rem', height: 'calc(100vh - 5.5rem)'}}>
                     <Menu />
                 </div>
-                <div className={`flex-1 p-4 overflow-y-auto ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-background text-gray-700'}`}>
+                <div className={`flex-1 p-4 overflow-y-auto ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-background text-gray-700'}`} style={{height: 'calc(100vh - 5.5rem)'}}>
                     {/* Contenido del panel principal */}
                 </div>
             </div>

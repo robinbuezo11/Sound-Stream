@@ -107,7 +107,7 @@ const Player = () => {
                 <img src={songImage} alt="Song" className="w-14 h-14 object-cover rounded-lg" />
                 <div className="flex flex-col">
                     <span className="text-lg font-semibold">{songTitle}</span>
-                    <span className="text-sm text-gray-600">{songArtist}</span>
+                    <span className="text-sm text-gray-500">{songArtist}</span>
                 </div>
             </div>
             <div className="flex flex-col items-center space-y-2 mb-5">
