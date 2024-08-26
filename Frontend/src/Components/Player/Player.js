@@ -6,10 +6,10 @@ const Player = () => {
     const songImage = 'https://images.unsplash.com/photo-1569519576545-fa1e60738b37?q=80&w=1597&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
     const songTitle = 'El Amar y el Querer';
     const songArtist = 'José José';
-    const audioSrc = './c1.mp3';
+    const audioSrc = require('./c1.mp3');
 
     const [progress, setProgress] = useState(0);
-    const [volume, setVolume] = useState(50);
+    const [volume, setVolume] = useState(100);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMute, setIsMute] = useState(false);
     const [isHoveringProgress, setIsHoveringProgress] = useState(false);
@@ -18,11 +18,17 @@ const Player = () => {
     const [duration, setDuration] = useState('-0:00');
 
     const audioRef = useRef(null);
-    const [curretVolume, setCurretVolume] = useState(0.5);
+    const [curretVolume, setCurretVolume] = useState(1.0); // Valor inicial por defecto
 
     useEffect(() => {
         const audio = audioRef.current;
         if (audio) {
+            const handleLoadedMetadata = () => {
+                if (!isFinite(audio.duration)) {
+                    console.error('Duración no válida después de cargar los metadatos');
+                }
+            };
+
             const handleTimeUpdate = () => {
                 const current = audio.currentTime;
                 const duration = audio.duration;
@@ -39,9 +45,11 @@ const Player = () => {
                 setDuration(`-${formatTime(duration - current)}`);
             };
 
+            audio.addEventListener('loadedmetadata', handleLoadedMetadata);
             audio.addEventListener('timeupdate', handleTimeUpdate);
 
             return () => {
+                audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
                 audio.removeEventListener('timeupdate', handleTimeUpdate);
             };
         }
@@ -50,8 +58,10 @@ const Player = () => {
     const handleProgressChange = (e) => {
         const newProgress = e.target.value;
         setProgress(newProgress);
-        if (audioRef.current) {
-            audioRef.current.currentTime = (newProgress / 100) * audioRef.current.duration;
+
+        const audio = audioRef.current;
+        if (audio && audio.duration && isFinite(audio.duration)) {
+            audio.currentTime = (newProgress / 100) * audio.duration;
         }
     };
 
@@ -60,7 +70,7 @@ const Player = () => {
         setVolume(newVolume);
         if (audioRef.current) {
             audioRef.current.volume = newVolume / 100;
-            setCurretVolume(newVolume / 100); // Guardamos el volumen actual
+            setCurretVolume(newVolume / 100);
         }
     };
 
@@ -127,7 +137,9 @@ const Player = () => {
                             value={progress}
                             onChange={handleProgressChange}
                             className="absolute w-full top-0 left-0 appearance-none bg-transparent pointer-events-auto"
-                            style={{ zIndex: 101 }} />
+                            style={{ zIndex: 101 }}
+                            disabled={!isFinite(audioRef.current?.duration)}
+                        />
                     </div>
                 </div>
             </div>
@@ -151,7 +163,8 @@ const Player = () => {
                         value={volume}
                         onChange={handleVolumeChange}
                         className="absolute w-full top-0 left-0 appearance-none bg-transparent pointer-events-auto"
-                        style={{ zIndex: 101 }} />
+                        style={{ zIndex: 101 }}
+                    />
                 </div>
             </div>
             <audio ref={audioRef} src={audioSrc}></audio>
