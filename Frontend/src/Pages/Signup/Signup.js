@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaCheck, FaTimes, FaEye, FaEyeSlash, FaCalendarAlt } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { isDarkMode } from '../../Utils/DarkMode';
 
@@ -106,7 +106,7 @@ const Signup = () => {
                                     className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
                                     onClick={() => document.getElementById('dobInput').focus()}
                                 >
-                                    <FaCalendarAlt className="text-gray-500" />
+                                    {/* <FaCalendarAlt className="ml-35 text-gray-500" /> */}
                                 </div>
                             </div>
                         </div>
@@ -169,7 +169,7 @@ const Signup = () => {
                                     onChange={(e) => setProfilePic(e.target.files[0])} 
                                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                 />
-                                <label htmlFor="profilePic" className={`w-full px-4 py-2 border rounded-lg bg-gray-200 text-gray-700 flex items-center justify-center cursor-pointer hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-primary ${darkMode ? 'bg-inputBackground text-colorText border-border' : ''}`}>
+                                <label htmlFor="profilePic" className={`w-full px-4 py-2 border rounded-lg bg-gray-20 flex items-center justify-center cursor-pointer hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-primary ${darkMode ? 'bg-dark text-colorText border-border' : 'text-gray-700'}`}>
                                     {profilePic ? profilePic.name : 'Selecciona una foto'}
                                 </label>
                             </div>

@@ -6,8 +6,8 @@ import '../../Utils/Scroll.css';
 import '../../Utils/Normalize.css';
 import { isDarkMode } from '../../Utils/DarkMode';
 
-const User = () => {
-    const [darkMode, setDarkMode] = useState(isDarkMode()); // Estado para el modo oscuro
+const User = ({ userName }) => {
+    const [darkMode, setDarkMode] = useState(isDarkMode());
 
     useEffect(() => {
         // Actualiza el estado cuando cambian las preferencias del sistema
@@ -25,7 +25,7 @@ const User = () => {
 
     return (
         <div className={`flex flex-col h-screen ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-white text-gray-700'}`}>
-            <TopBar darkMode={darkMode} />
+            <TopBar darkMode={darkMode} userName={userName} />
             <div className="flex flex-1 overflow-hidden">
                 <div className={`p-6 ${darkMode ? 'bg-secondaryBackground text-colorText' : 'bg-gray-200 text-gray-700'} overflow-y-auto custom-scrollbar`} style={{ width: '20rem', height: 'calc(100vh - 5.5rem)'}}>
                     <Menu />

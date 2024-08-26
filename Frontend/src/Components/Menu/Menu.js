@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaHeart, FaUser } from 'react-icons/fa';
+import { FaHome, FaHeart } from 'react-icons/fa';
 import { IoIosRadio } from 'react-icons/io'; 
 import { SlEarphones } from 'react-icons/sl';
 import { isDarkMode } from '../../Utils/DarkMode';
@@ -15,8 +15,8 @@ const playlists = [
 ];
 
 const options = [
+    { name: 'Inicio', icon: <FaHome className="text-xl text-white" />, bgColor: 'bg-blue-500' },
     { name: 'Favoritos', icon: <FaHeart className="text-xl text-white" />, bgColor: 'bg-purple-500' },
-    { name: 'Perfil', icon: <FaUser className="text-xl text-white" />, bgColor: 'bg-green-500' },
     { name: 'Radio', icon: <IoIosRadio className="text-xl text-white" />, bgColor: 'bg-green-500' },
 ];
 

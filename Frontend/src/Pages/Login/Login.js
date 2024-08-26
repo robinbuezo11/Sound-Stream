@@ -30,10 +30,10 @@ const Login = ({ onLogin }) => {
         const admin = email === 'admin@sound-stream.com' && password === 'admin';
         const user = email === 'user@sound-stream.com' && password === 'user';
         if (admin) {
-            onLogin(true); // Llama a onLogin con el estado de autenticación
+            onLogin(true, 'Admin'); // Llama a onLogin con el estado de autenticación y el nombre del usuario
             navigate('/Admin');
         } else if (user) {
-            onLogin(true); // Llama a onLogin con el estado de autenticación
+            onLogin(true, 'Jefferson'); // Llama a onLogin con el estado de autenticación y el nombre del usuario
             navigate('/user');
         } else {
             alert('Credenciales incorrectas');

@@ -14,6 +14,7 @@ module.exports = {
         mainBackground: '#1E2022',
         secondaryBackground: '#181A1B',
         inputBackground: '#121212',
+        dark: '#25282A',
         colorText: '#f3f4f6',
         border: '#1f2937',
         text: '#1f2937',

@@ -6,8 +6,11 @@ import User from './Pages/User/User';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const handleLogin = (status) => {
+  const [userName, setUserName] = useState('');
+
+  const handleLogin = (status, name = '') => {
       setIsAuthenticated(status);
+      setUserName(name);
   };
 
   return (
@@ -15,7 +18,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login onLogin={handleLogin} />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/User" element={isAuthenticated ? <User /> : <Login onLogin={handleLogin} />} />
+        <Route path="/User" element={isAuthenticated ? <User userName={userName} /> : <Login onLogin={handleLogin} />} />
         {/* <Route path="/User" element={<User />} /> */}
       </Routes>
     </Router>
