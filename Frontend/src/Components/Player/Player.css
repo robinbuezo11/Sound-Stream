@@ -4,77 +4,77 @@ input[type="range"]::-webkit-slider-thumb {
     appearance: none;
     width: 14px;
     height: 14px;
-    background: transparent; /* Hacer el círculo transparente */
+    background: transparent;
     border-radius: 50%;
     cursor: pointer;
     position: relative;
     z-index: 101;
-    margin-top: -4px; /* Ajuste para centrar */
+    margin-top: -4px;
 }
 
 /* Estilo para Firefox */
 input[type="range"]::-moz-range-thumb {
     width: 14px;
     height: 14px;
-    background: transparent; /* Hacer el círculo transparente */
+    background: transparent;
     border-radius: 50%;
     cursor: pointer;
     position: relative;
     z-index: 101;
-    margin-top: -4px; /* Ajuste para centrar */
+    margin-top: -4px;
 }
 
 /* Estilo para IE */
 input[type="range"]::-ms-thumb {
     width: 14px;
     height: 14px;
-    background: transparent; /* Hacer el círculo transparente */
+    background: transparent;
     border-radius: 50%;
     cursor: pointer;
     position: relative;
     z-index: 101;
-    margin-top: -4px; /* Ajuste para centrar */
+    margin-top: -4px;
 }
 
 /* Mostrar el círculo solo en hover */
 input[type="range"]:hover::-webkit-slider-thumb {
-    background: white; /* Cambiar a blanco en hover */
+    background: white;
 }
 
 input[type="range"]:hover::-moz-range-thumb {
-    background: white; /* Cambiar a blanco en hover */
+    background: white;
 }
 
 input[type="range"]:hover::-ms-thumb {
-    background: white; /* Cambiar a blanco en hover */
+    background: white;
 }
 
 /* Eliminar estilos por defecto de relleno para evitar conflictos */
 input[type="range"] {
-    -webkit-appearance: none; /* Para Safari y Chrome */
-    -moz-appearance: none; /* Para Firefox */
-    appearance: none; /* Estándar */
-    background: transparent; /* Fondo transparente */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
 }
 
 /* Estilo para la barra de progreso */
 input[type="range"]::-webkit-slider-runnable-track {
-    height: 2px; /* Ajusta la altura de la barra */
-    background: transparent; /* Fondo transparente */
+    height: 2px;
+    background: transparent;
 }
 
 /* Para Firefox */
 input[type="range"]::-moz-range-track {
-    height: 2px; /* Ajusta la altura de la barra */
-    background: transparent; /* Fondo transparente */
+    height: 2px;
+    background: transparent;
 }
 
 /* Para IE */
 input[type="range"]::-ms-track {
-    height: 2px; /* Ajusta la altura de la barra */
-    background: transparent; /* Fondo transparente */
-    border-color: transparent; /* Quita bordes por defecto */
-    color: transparent; /* Quita colores por defecto */
+    height: 2px;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
 }
 
 /* Ocultar el círculo por defecto */
@@ -83,75 +83,75 @@ input[type="range"]::-webkit-slider-thumb {
     appearance: none;
     width: 14px;
     height: 14px;
-    background: transparent; /* Hacer el círculo transparente */
+    background: transparent;
     border-radius: 50%;
     cursor: pointer;
     position: relative;
     z-index: 101;
-    margin-top: -4px; /* Ajuste para centrar */
+    margin-top: -4px;
 }
 
 /* Estilo para Firefox */
 input[type="range"]::-moz-range-thumb {
     width: 14px;
     height: 14px;
-    background: transparent; /* Hacer el círculo transparente */
+    background: transparent;
     border-radius: 50%;
     cursor: pointer;
     position: relative;
     z-index: 101;
-    margin-top: -4px; /* Ajuste para centrar */
+    margin-top: -4px;
 }
 
 /* Estilo para IE */
 input[type="range"]::-ms-thumb {
     width: 14px;
     height: 14px;
-    background: transparent; /* Hacer el círculo transparente */
+    background: transparent;
     border-radius: 50%;
     cursor: pointer;
     position: relative;
     z-index: 101;
-    margin-top: -4px; /* Ajuste para centrar */
+    margin-top: -4px;
 }
 
 /* Mostrar el círculo solo en hover */
 input[type="range"]:hover::-webkit-slider-thumb {
-    background: white; /* Cambiar a blanco en hover */
+    background: white;
 }
 
 input[type="range"]:hover::-moz-range-thumb {
-    background: white; /* Cambiar a blanco en hover */
+    background: white;
 }
 
 input[type="range"]:hover::-ms-thumb {
-    background: white; /* Cambiar a blanco en hover */
+    background: white;
 }
 
 /* Eliminar estilos por defecto de relleno para evitar conflictos */
 input[type="range"] {
-    -webkit-appearance: none; /* Para Safari y Chrome */
-    -moz-appearance: none; /* Para Firefox */
-    appearance: none; /* Estándar */
-    background: transparent; /* Fondo transparente */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
 }
 
 /* Estilo para la barra de volumen */
 input[type="range"]::-webkit-slider-runnable-track {
-    height: 2px; /* Ajusta la altura de la barra */
-    background: transparent; /* Fondo transparente */
+    height: 2px;
+    background: transparent;
 }
 
 /* Para Firefox */
 input[type="range"]::-moz-range-track {
-    height: 2px; /* Ajusta la altura de la barra */
-    background: transparent; /* Fondo transparente */
+    height: 2px;
+    background: transparent;
 }
 
 /* Para IE */
 input[type="range"]::-ms-track {
-    height: 2px; /* Ajusta la altura de la barra */
-    background: transparent; /* Fondo transparente */
-    border-color: transparent; /* Quita bordes por defecto */
-    color: transparent; /* Quita colores por defecto */
+    height: 2px;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
 }

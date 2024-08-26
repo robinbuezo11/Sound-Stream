@@ -10,10 +10,14 @@ const Login = ({ onLogin }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const isAuthenticated = email === 'admin@sound-stream.com' && password === 'admin';
-        if (isAuthenticated) {
+        const admin = email === 'admin@sound-stream.com' && password === 'admin';
+        const user = email === 'user@sound-stream.com' && password === 'user';
+        if (admin) {
             onLogin(true); // Llama a onLogin con el estado de autenticación
-            navigate('/User');
+            navigate('/Admin');
+        } else if (user) {
+            onLogin(true); // Llama a onLogin con el estado de autenticación
+            navigate('/user');
         } else {
             alert('Credenciales incorrectas');
         }
