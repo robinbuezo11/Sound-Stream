@@ -15,16 +15,15 @@ const playlists = [
 ];
 
 const options = [
-    { name: 'Inicio', icon: <FaHome className="text-xl text-white" />, bgColor: 'bg-blue-500' },
-    { name: 'Favoritos', icon: <FaHeart className="text-xl text-white" />, bgColor: 'bg-purple-500' },
-    { name: 'Radio', icon: <IoIosRadio className="text-xl text-white" />, bgColor: 'bg-green-500' },
+    { name: 'Inicio', icon: <FaHome className="text-xl text-white" />, bgColor: 'bg-blue-500', panel: 'Home' },
+    { name: 'Favoritos', icon: <FaHeart className="text-xl text-white" />, bgColor: 'bg-purple-500', panel: 'Favorites' },
+    { name: 'Radio', icon: <IoIosRadio className="text-xl text-white" />, bgColor: 'bg-green-500', panel: 'Radio' },
 ];
 
-const Menu = () => {
-    const [darkMode, setDarkMode] = useState(isDarkMode()); // Estado para el modo oscuro
+const Menu = ({ setActivePanel }) => {
+    const [darkMode, setDarkMode] = useState(isDarkMode());
 
     useEffect(() => {
-        // Actualiza el estado cuando cambian las preferencias del sistema
         const darkModeListener = window.matchMedia('(prefers-color-scheme: dark)');
         darkModeListener.addEventListener('change', (e) => {
             setDarkMode(e.matches);
@@ -47,7 +46,11 @@ const Menu = () => {
                 </h2>
                 <div className="space-y-1">
                     {options.map((option, index) => (
-                        <div key={index} className={`${darkMode ? 'bg-secondaryBackground' : 'bg-gray-200'} p-2 rounded-lg flex items-center space-x-2 cursor-pointer`}>
+                        <div
+                            key={index}
+                            className={`${darkMode ? 'bg-secondaryBackground' : 'bg-gray-200'} p-2 rounded-lg flex items-center space-x-2 cursor-pointer`}
+                            onClick={() => setActivePanel(option.panel)} // Cambia el panel acivo
+                        >
                             <div className={`${option.bgColor} w-11 h-11 flex items-center justify-center rounded`}>
                                 {option.icon}
                             </div>

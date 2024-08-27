@@ -1,4 +1,3 @@
-/* CSS para un scroll minimalista */
 .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
 }

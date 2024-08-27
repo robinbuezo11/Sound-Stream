@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import Menu from '../../Components/Menu/Menu';
 import Player from '../../Components/Player/Player';
 import TopBar from '../../Components/TopBar/TopBar';
+import Home from '../../Components/Panels/Home';
+import Favorites from '../../Components/Panels/Favorites';
 import '../../Utils/Scroll.css';
 import '../../Utils/Normalize.css';
 import { isDarkMode } from '../../Utils/DarkMode';
 
 const User = ({ userName }) => {
     const [darkMode, setDarkMode] = useState(isDarkMode());
+    const [activePanel, setActivePanel] = useState('Home'); // Panel activo
 
     useEffect(() => {
-        // Actualiza el estado cuando cambian las preferencias del sistema
         const darkModeListener = window.matchMedia('(prefers-color-scheme: dark)');
         darkModeListener.addEventListener('change', (e) => {
             setDarkMode(e.matches);
@@ -28,10 +30,11 @@ const User = ({ userName }) => {
             <TopBar darkMode={darkMode} userName={userName} />
             <div className="flex flex-1 overflow-hidden">
                 <div className={`p-6 ${darkMode ? 'bg-secondaryBackground text-colorText' : 'bg-gray-200 text-gray-700'} overflow-y-auto custom-scrollbar`} style={{ width: '20rem', height: 'calc(100vh - 5.5rem)'}}>
-                    <Menu />
+                    <Menu setActivePanel={setActivePanel} /> {/* Pasamos la función para cambiar el panel activo */}
                 </div>
-                <div className={`flex-1 p-4 overflow-y-auto ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-background text-gray-700'}`} style={{height: 'calc(100vh - 10.5rem)', marginTop: '5rem'}}>
-                    {/* Contenido del panel principal */}
+                <div className={`flex-1 overflow-y-auto custom-scrollbar ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-background text-gray-700'}`} style={{height: 'calc(100vh - 10.5rem)', marginTop: '5rem'}}>
+                    {activePanel === 'Home' && <Home darkMode={darkMode} />}
+                    {activePanel === 'Favorites' && <Favorites darkMode={darkMode} />}
                 </div>
             </div>
             <div className={`fixed bottom-0 w-full p-4 ${darkMode ? 'bg-secondaryBackground text-colorText' : 'bg-gray-300 text-gray-700'}`} style={{ height: '5.5rem' }}>

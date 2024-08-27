@@ -33,7 +33,7 @@ const Login = ({ onLogin }) => {
             onLogin(true, 'Admin'); // Llama a onLogin con el estado de autenticación y el nombre del usuario
             navigate('/Admin');
         } else if (user) {
-            onLogin(true, 'Jefferson'); // Llama a onLogin con el estado de autenticación y el nombre del usuario
+            onLogin(true, 'user'); // Llama a onLogin con el estado de autenticación y el nombre del usuario
             navigate('/user');
         } else {
             alert('Credenciales incorrectas');
