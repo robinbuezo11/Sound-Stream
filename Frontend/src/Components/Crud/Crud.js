@@ -8,6 +8,7 @@ const Crud = ({ darkMode }) => {
     const [duration, setDuration] = useState(null);
     const [showDetailsForm, setShowDetailsForm] = useState(false);
     const [songsList, setSongsList] = useState([]); // Nueva lista para las canciones
+    const [selectedSong, setSelectedSong] = useState(null); // Canción seleccionada para detalles
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -52,6 +53,14 @@ const Crud = ({ darkMode }) => {
         // Filtrar la canción a eliminar por su id
         const updatedList = songsList.filter(song => song.id !== id);
         setSongsList(updatedList);
+    };
+
+    const handleViewDetails = (song) => {
+        setSelectedSong(song);
+    };
+
+    const handleCloseDetails = () => {
+        setSelectedSong(null);
     };
 
     return (
@@ -160,14 +169,53 @@ const Crud = ({ darkMode }) => {
                                         </button>
                                     </td>
                                     <td className="border px-4 py-2">
-                                        <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-                                        ⓘ
+                                        <button 
+                                            onClick={() => handleViewDetails(song)}
+                                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                                        >
+                                            ⓘ
                                         </button>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+                </div>
+            )}
+
+            {/* Panel de detalles de la canción seleccionada */}
+            {selectedSong && (
+                <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-3/4 max-w-2xl">
+                        <h2 className="text-2xl font-semibold mb-4">Detalles de la Canción</h2>
+                        <button 
+                            onClick={handleCloseDetails}
+                            className="absolute top-2 right-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                        >
+                            ❌
+                        </button>
+                        <div className="mb-4">
+                            <img src={selectedSong.photo} alt="Foto de canción" className="w-32 h-32 object-cover mb-2" />
+                        </div>
+                        <div className="mb-4">
+                            <p className="font-medium">Nombre:</p>
+                            <p>{selectedSong.title}</p>
+                        </div>
+                        <div className="mb-4">
+                            <p className="font-medium">Artista:</p>
+                            <p>{selectedSong.artist}</p>
+                        </div>
+                        <div className="mb-4">
+                            <p className="font-medium">Duración:</p>
+                            <p>{selectedSong.duration}</p>
+                        </div>
+                        <div className="mb-4">
+                            <audio controls>
+                                <source src={URL.createObjectURL(selectedSong.file)} type="audio/mpeg" />
+                                Tu navegador no soporta el elemento de audio.
+                            </audio>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
