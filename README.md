@@ -1,4 +1,7 @@
 # Semi1-A-2S2024-Grupo15-Practica1
+# 🎧SoundStream
+
+Link a SoundStream
 Practica 1 del Laboratorio del Curso de Seminario de Sistemas 1
 | Curso                   | Sección   |
 |-------------------------|-----------|
