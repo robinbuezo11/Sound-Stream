@@ -15,7 +15,7 @@ const playlists = [
     { name: 'Electronic', songCount: 18, image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
 ];
 const crudamin =[
-    { name: 'CRUD Canción', icon: <FaMusic className="text-xl text-white" />, bgColor: 'bg-blue-500',}   
+    { name: 'Canción', icon: <FaMusic className="text-xl text-white" />, bgColor: 'bg-blue-500',panel: 'Crud'}   
 ]
 const options = [
     { name: 'Inicio', icon: <FaHome className="text-xl text-white" />, bgColor: 'bg-blue-500', panel: 'Home' },
@@ -78,19 +78,19 @@ const Menu = ({ setActivePanel }) => {
                 ))}
             <h3 className={`text-xl font-bold mb-2 ${darkMode ? 'text-colorText' : 'text-gray-700'}`}>CRUD Administrador</h3>   
             <div className="space-y-1">
-                    {crudamin.map((option, index) => (
+                    {crudamin.map((optiona, index) => (
                         <div
                             key={index}
                             className={`${darkMode ? 'bg-secondaryBackground' : 'bg-gray-200'} p-2 rounded-lg flex items-center space-x-2 cursor-pointer`}
-                            onClick={() => setActivePanel(option.panel)} // Cambia el panel acivo
+                            onClick={() => setActivePanel(optiona.panel)} // Cambia el panel acivo
                         >
-                            <div className={`${option.bgColor} w-11 h-11 flex items-center justify-center rounded`}>
-                                {option.icon}
+                            <div className={`${optiona.bgColor} w-11 h-11 flex items-center justify-center rounded`}>
+                                {optiona.icon}
                             </div>
-                            <span className={`text-xl ${darkMode ? 'text-colorText' : 'text-gray-700'}`}>{option.name}</span>
+                            <span className={`text-xl ${darkMode ? 'text-colorText' : 'text-gray-700'}`}>{optiona.name}</span>
                         </div>
                     ))}
-                </div> 
+                </div>
             </div>
         </>
     );
