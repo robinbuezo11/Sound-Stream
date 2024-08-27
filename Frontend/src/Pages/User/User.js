@@ -4,6 +4,7 @@ import Player from '../../Components/Player/Player';
 import TopBar from '../../Components/TopBar/TopBar';
 import Home from '../../Components/Panels/Home';
 import Favorites from '../../Components/Panels/Favorites';
+import Radio from "../../Components/Panels/Radio"//Importación de Radio
 import '../../Utils/Scroll.css';
 import '../../Utils/Normalize.css';
 import { isDarkMode } from '../../Utils/DarkMode';
@@ -35,6 +36,7 @@ const User = ({ userName }) => {
                 <div className={`flex-1 overflow-y-auto custom-scrollbar ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-background text-gray-700'}`} style={{height: 'calc(100vh - 10.5rem)', marginTop: '5rem'}}>
                     {activePanel === 'Home' && <Home darkMode={darkMode} />}
                     {activePanel === 'Favorites' && <Favorites darkMode={darkMode} />}
+                    {activePanel === 'Radio' && <Radio darkMode={darkMode} />}
                 </div>
             </div>
             <div className={`fixed bottom-0 w-full p-4 ${darkMode ? 'bg-secondaryBackground text-colorText' : 'bg-gray-300 text-gray-700'}`} style={{ height: '5.5rem' }}>

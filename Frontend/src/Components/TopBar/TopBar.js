@@ -17,7 +17,11 @@ const TopBar = ({ darkMode, userName }) => {
         localStorage.removeItem('userName');         
         navigate('/'); 
     };
-    
+    const EditProfile =() =>{
+        console.log('Redirigiendo a la edición de Perfil...')
+        console.log(userName)
+        navigate('/Profile')
+    }
     return (
         <div 
             className={`fixed top-0 right-0 p-4 flex items-center ${darkMode ? 'bg-inputBackground text-white' : 'bg-gray-200 text-gray-800'}`} 
@@ -48,9 +52,11 @@ const TopBar = ({ darkMode, userName }) => {
                 <IoIosArrowDown className="ml-2 text-xl cursor-pointer" />
                 {dropdownVisible && (
                     <ul className={`absolute top-full right-0 mt-2 rounded-lg shadow-lg w-48 ${darkMode ? 'bg-inputBackground text-white border-gray-100' : 'bg-white text-gray-800 border-gray-300'}`}>
-                        
-                        <li className={`px-4 py-2 cursor-pointer hover:${darkMode ? 'bg-gray-600' : 'bg-gray-100'}`}>
-                            Otra opción
+                       <li 
+                            className={`px-4 py-2 cursor-pointer hover:${darkMode ? 'bg-gray-600' : 'bg-gray-100'}`} 
+                            onClick={EditProfile} 
+                        >
+                            Perfil
                         </li>
                         <li 
                             className={`px-4 py-2 cursor-pointer hover:${darkMode ? 'bg-gray-600' : 'bg-gray-100'}`} 
