@@ -7,8 +7,14 @@ const Crud = ({ darkMode }) => {
     const [photo, setPhoto] = useState(null);
     const [duration, setDuration] = useState(null);
     const [showDetailsForm, setShowDetailsForm] = useState(false);
-    const [songsList, setSongsList] = useState([]); // Nueva lista para las canciones
-    const [selectedSong, setSelectedSong] = useState(null); // Canción seleccionada para detalles
+    const [songsList, setSongsList] = useState([]);
+    const [selectedSong, setSelectedSong] = useState(null);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [updateSong, setUpdateSong] = useState(null);
+    const [newTitle, setNewTitle] = useState('');
+    const [newArtist, setNewArtist] = useState('');
+    const [newSongFile, setNewSongFile] = useState(null);
+    const [newPhoto, setNewPhoto] = useState(null);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -34,10 +40,8 @@ const Crud = ({ darkMode }) => {
                 duration: `${Math.floor(duration / 60)}:${Math.floor(duration % 60).toString().padStart(2, '0')}`
             };
 
-            // Agregar la nueva canción a la lista
             setSongsList([...songsList, newSong]);
 
-            // Limpiar el formulario
             setSongFile(null);
             setTitle('');
             setArtist('');
@@ -50,7 +54,6 @@ const Crud = ({ darkMode }) => {
     };
 
     const handleDeleteSong = (id) => {
-        // Filtrar la canción a eliminar por su id
         const updatedList = songsList.filter(song => song.id !== id);
         setSongsList(updatedList);
     };
@@ -61,6 +64,41 @@ const Crud = ({ darkMode }) => {
 
     const handleCloseDetails = () => {
         setSelectedSong(null);
+    };
+
+    const handleUpdateClick = (song) => {
+        setUpdateSong(song);
+        setNewTitle(song.title);
+        setNewArtist(song.artist);
+        setNewPhoto(null); // Reset photo to allow new upload
+        setIsUpdating(true);
+    };
+
+    const handleUpdateSong = (e) => {
+        e.preventDefault();
+        if (newTitle && newArtist) {
+            const updatedSongsList = songsList.map(song =>
+                song.id === updateSong.id
+                    ? {
+                        ...song,
+                        title: newTitle,
+                        artist: newArtist,
+                        file: newSongFile ? newSongFile : song.file,
+                        photo: newPhoto ? URL.createObjectURL(newPhoto) : song.photo
+                    }
+                    : song
+            );
+
+            setSongsList(updatedSongsList);
+            setUpdateSong(null);
+            setNewTitle('');
+            setNewArtist('');
+            setNewSongFile(null);
+            setNewPhoto(null);
+            setIsUpdating(false);
+        } else {
+            console.error('Por favor, completa todos los campos');
+        }
     };
 
     return (
@@ -132,6 +170,65 @@ const Crud = ({ darkMode }) => {
                 )}
             </form>
 
+            {/* Formulario para actualizar canción */}
+            {isUpdating && (
+                <div className={`mt-8 mx-4 p-4 ${darkMode ? 'bg-gray-800' : 'bg-gray-100'} border rounded`}>
+                    <h2 className="text-2xl font-semibold mb-4">Actualizar Canción</h2>
+                    <form onSubmit={handleUpdateSong}>
+                        <div className="mb-4">
+                            <label className={`block text-lg font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Título</label>
+                            <input
+                                type="text"
+                                value={newTitle}
+                                onChange={(e) => setNewTitle(e.target.value)}
+                                className={`w-full p-2 border rounded ${darkMode ? 'bg-gray-800 text-white border-gray-600' : 'bg-white text-gray-800 border-gray-300'}`}
+                                required
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label className={`block text-lg font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Artista</label>
+                            <input
+                                type="text"
+                                value={newArtist}
+                                onChange={(e) => setNewArtist(e.target.value)}
+                                className={`w-full p-2 border rounded ${darkMode ? 'bg-gray-800 text-white border-gray-600' : 'bg-white text-gray-800 border-gray-300'}`}
+                                required
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label className={`block text-lg font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Cambiar Canción</label>
+                            <input
+                                type="file"
+                                accept="audio/*"
+                                onChange={(e) => setNewSongFile(e.target.files[0])}
+                                className={`w-full p-2 border rounded ${darkMode ? 'bg-gray-800 text-white border-gray-600' : 'bg-white text-gray-800 border-gray-300'}`}
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label className={`block text-lg font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Cambiar Fotografía</label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => setNewPhoto(e.target.files[0])}
+                                className={`w-full p-2 border rounded ${darkMode ? 'bg-gray-800 text-white border-gray-600' : 'bg-white text-gray-800 border-gray-300'}`}
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            className={`w-full py-2 px-4 rounded ${darkMode ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-blue-700 text-white hover:bg-blue-800'}`}
+                        >
+                            Guardar Cambios
+                        </button>
+                        <button
+                            onClick={() => setIsUpdating(false)}
+                            className={`mt-2 w-full py-2 px-4 rounded ${darkMode ? 'bg-gray-600 text-white hover:bg-gray-700' : 'bg-gray-300 text-gray-800 hover:bg-gray-400'}`}
+                        >
+                            Cancelar
+                        </button>
+                    </form>
+                </div>
+            )}
+
             {/* Tabla de canciones cargadas */}
             {songsList.length > 0 && (
                 <div className="mt-8 mx-4">
@@ -156,8 +253,11 @@ const Crud = ({ darkMode }) => {
                                     <td className="border px-4 py-2">{song.title}</td>
                                     <td className="border px-4 py-2">{song.artist}</td>
                                     <td className="border px-4 py-2">
-                                        <button className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                                        ⟳
+                                        <button
+                                            onClick={() => handleUpdateClick(song)}
+                                            className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
+                                        >
+                                            ⟳
                                         </button>
                                     </td>
                                     <td className="border px-4 py-2">
