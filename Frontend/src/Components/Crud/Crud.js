@@ -283,40 +283,44 @@ const Crud = ({ darkMode }) => {
                 </div>
             )}
 
-            {/* Panel de detalles de la canción seleccionada */}
-            {selectedSong && (
-                <div className={`fixed inset-0 ${darkMode ? 'bg-gray-900' : 'bg-gray-900'} bg-opacity-75 flex justify-center items-center z-50`}>
-                    <div className={`bg-${darkMode ? 'gray-800' : 'white'} p-6 rounded-lg shadow-lg w-3/4 max-w-2xl`}>
-                        <h2 className="text-2xl font-semibold mb-4">Detalles de la Canción</h2>
-                        <button 
-                            onClick={handleCloseDetails}
-                            className={`absolute top-2 right-2 ${darkMode ? 'bg-red-500' : 'bg-red-500'} text-white px-4 py-2 rounded hover:bg-red-600`}
-                        >
-                            ❌
-                        </button>
-                        <div className="mb-4">
-                            <img src={selectedSong.photo} alt="Foto de canción" className="w-32 h-32 object-cover mb-2" />
-                        </div>
-                        <div className="mb-4">
-                            <p className="font-medium">Nombre:</p>
-                            <p>{selectedSong.title}</p>
-                        </div>
-                        <div className="mb-4">
-                            <p className="font-medium">Artista:</p>
-                            <p>{selectedSong.artist}</p>
-                        </div>
-                        <div className="mb-4">
-                            <p className="font-medium">Duración:</p>
-                            <p>{selectedSong.duration}</p>
-                        </div>
-                        <div className="mb-4">
-                            <audio controls>
-                                <source src={URL.createObjectURL(selectedSong.file)} type="audio/mpeg" />
-                                Tu navegador no soporta el elemento de audio.
-                            </audio>
-                        </div>
+{/* Panel de detalles de la canción seleccionada */}
+{selectedSong && (
+    <div className={`fixed inset-0 ${darkMode ? 'bg-gray-900' : 'bg-gray-900'} bg-opacity-75 flex justify-center items-center z-50`}>
+        <div className={`bg-${darkMode ? 'gray-800' : 'white'} p-6 rounded-lg shadow-lg w-3/4 max-w-2xl`}>
+            <h2 className="text-2xl font-semibold mb-4">Detalles de la Canción</h2>
+            <button 
+                onClick={handleCloseDetails}
+                className={`absolute top-2 right-2 ${darkMode ? 'bg-red-500' : 'bg-red-500'} text-white px-4 py-2 rounded hover:bg-red-600`}
+            >
+                ❌
+            </button>
+            <div className="flex items-start mb-4">
+                <div className="w-1/3 mr-4">
+                    <img src={selectedSong.photo} alt="Foto de canción" className="w-full h-auto object-cover" />
+                </div>
+                <div className="w-2/3">
+                    <div className="mb-4">
+                        <p className="font-medium">Nombre:</p>
+                        <p>{selectedSong.title}</p>
+                    </div>
+                    <div className="mb-4">
+                        <p className="font-medium">Artista:</p>
+                        <p>{selectedSong.artist}</p>
+                    </div>
+                    <div className="mb-4">
+                        <p className="font-medium">Duración:</p>
+                        <p>{selectedSong.duration}</p>
+                    </div>
+                    <div className="mb-4">
+                        <audio controls className="w-full">
+                            <source src={URL.createObjectURL(selectedSong.file)} type="audio/mpeg" />
+                            Tu navegador no soporta el elemento de audio.
+                        </audio>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
             )}
         </div>
     );
