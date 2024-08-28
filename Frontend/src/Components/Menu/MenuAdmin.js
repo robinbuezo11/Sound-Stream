@@ -3,6 +3,7 @@ import { FaHome, FaHeart } from 'react-icons/fa';
 import { IoIosRadio } from 'react-icons/io'; 
 import { SlEarphones } from 'react-icons/sl';
 import { isDarkMode } from '../../Utils/DarkMode';
+import { FaMusic } from 'react-icons/fa';
 
 const playlists = [
     { name: 'Chill Vibes', songCount: 12, image: 'https://images.unsplash.com/photo-1724368202143-3781f7b30d23?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
@@ -13,13 +14,16 @@ const playlists = [
     { name: 'Classical Music', songCount: 22, image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
     { name: 'Electronic', songCount: 18, image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
 ];
+const crudamin =[
+    { name: 'Canción', icon: <FaMusic className="text-xl text-white" />, bgColor: 'bg-blue-500',panel: 'Crud'}   
+]
 const options = [
     { name: 'Inicio', icon: <FaHome className="text-xl text-white" />, bgColor: 'bg-blue-500', panel: 'Home' },
     { name: 'Favoritos', icon: <FaHeart className="text-xl text-white" />, bgColor: 'bg-purple-500', panel: 'Favorites' },
     { name: 'Radio', icon: <IoIosRadio className="text-xl text-white" />, bgColor: 'bg-green-500', panel: 'Radio' },
 ];
 
-const Menu = ({ setActivePanel }) => {
+const MenuAdmin = ({ setActivePanel }) => {
     const [darkMode, setDarkMode] = useState(isDarkMode());
 
     useEffect(() => {
@@ -72,9 +76,24 @@ const Menu = ({ setActivePanel }) => {
                         </div>
                     </div>
                 ))}
+            <h3 className={`text-xl font-bold mb-2 ${darkMode ? 'text-colorText' : 'text-gray-700'}`}>CRUD Administrador</h3>   
+            <div className="space-y-1">
+                    {crudamin.map((optiona, index) => (
+                        <div
+                            key={index}
+                            className={`${darkMode ? 'bg-secondaryBackground' : 'bg-gray-200'} p-2 rounded-lg flex items-center space-x-2 cursor-pointer`}
+                            onClick={() => setActivePanel(optiona.panel)} // Cambia el panel acivo
+                        >
+                            <div className={`${optiona.bgColor} w-11 h-11 flex items-center justify-center rounded`}>
+                                {optiona.icon}
+                            </div>
+                            <span className={`text-xl ${darkMode ? 'text-colorText' : 'text-gray-700'}`}>{optiona.name}</span>
+                        </div>
+                    ))}
+                </div>
             </div>
         </>
     );
 };
 
-export default Menu;
+export default MenuAdmin;

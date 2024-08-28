@@ -52,7 +52,7 @@ const TopBar = ({ darkMode, userName }) => {
                 <IoIosArrowDown className="ml-2 text-xl cursor-pointer" />
                 {dropdownVisible && (
                     <ul className={`absolute top-full right-0 mt-2 rounded-lg shadow-lg w-48 ${darkMode ? 'bg-inputBackground text-white border-gray-100' : 'bg-white text-gray-800 border-gray-300'}`}>
-                       <li 
+                        <li 
                             className={`px-4 py-2 cursor-pointer hover:${darkMode ? 'bg-gray-600' : 'bg-gray-100'}`} 
                             onClick={EditProfile} 
                         >

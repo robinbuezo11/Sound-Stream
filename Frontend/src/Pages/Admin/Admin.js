@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Menu from '../../Components/Menu/Menu';
+import MenuAdmin from '../../Components/Menu/MenuAdmin';
 import Player from '../../Components/Player/Player';
 import Crud from '../../Components/Crud/Crud';
 import TopBar from '../../Components/TopBar/TopBar';
@@ -33,7 +33,7 @@ const Admin = ({ userName }) => {
             <TopBar darkMode={darkMode} userName={userName} />
             <div className="flex flex-1 overflow-hidden">
                 <div className={`p-6 ${darkMode ? 'bg-secondaryBackground text-colorText' : 'bg-gray-200 text-gray-700'} overflow-y-auto custom-scrollbar`} style={{ width: '20rem', height: 'calc(100vh - 5.5rem)'}}>
-                    <Menu setActivePanel={setActivePanel} /> {/* Pasamos la función para cambiar el panel activo */}
+                    <MenuAdmin setActivePanel={setActivePanel} /> {/* Pasamos la función para cambiar el panel activo */}
                 </div>
                 <div className={`flex-1 overflow-y-auto custom-scrollbar ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-background text-gray-700'}`} style={{height: 'calc(100vh - 10.5rem)', marginTop: '5rem'}}>
                     {activePanel === 'Home' && <Home darkMode={darkMode} />}
