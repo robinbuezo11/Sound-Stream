@@ -16,11 +16,12 @@ function App() {
       setUserName(storedUserName || '');
   }, []);
 
-  const handleLogin = (status, name = '') => {
+  const handleLogin = (status, user = {}) => {
       setIsAuthenticated(status);
-      setUserName(name);
+      setUserName(user.nombre || '');
       localStorage.setItem('isAuthenticated', status);
-      localStorage.setItem('userName', name);
+      localStorage.setItem('userName', user.nombre || '');
+      localStorage.setItem('profilePic', user.foto || '');
   };
 
   return (

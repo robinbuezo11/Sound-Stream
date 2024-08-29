@@ -41,7 +41,7 @@ const Signup = () => {
             });
             return;
         }
-
+        
         // Enviar Formulario  
         fetch(process.env.REACT_APP_API_URL + '/usuarios/registrar', {
             method: 'POST',
@@ -60,6 +60,7 @@ const Signup = () => {
         .then(response => response.json())
         .then(data => {
             if (data.error) {
+                console.error('Error:', data.error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -70,6 +71,8 @@ const Signup = () => {
                     icon: 'success',
                     title: 'Registro Exitoso',
                     text: 'Tu cuenta ha sido creada exitosamente'
+                }).then(() => {
+                    window.location.href = '/'; // Redirigir al usuario a la página de inicio de sesión
                 });
             }
         })
@@ -90,6 +93,17 @@ const Signup = () => {
             setIsMatch(true);
         } else {
             setIsMatch(false);
+        }
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setProfilePic(e.target.result);
+            };
+            reader.readAsDataURL(file);
         }
     };
 
@@ -216,7 +230,7 @@ const Signup = () => {
                                 <input 
                                     type="file" 
                                     id="profilePic" 
-                                    onChange={(e) => setProfilePic(e.target.files[0])} 
+                                    onChange={handleFileChange}
                                     required
                                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                 />

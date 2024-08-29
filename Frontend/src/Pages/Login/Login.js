@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { isDarkMode } from '../../Utils/DarkMode';
+import Swal from 'sweetalert2';
 
 const Login = ({ onLogin }) => {
     const [email, setEmail] = useState('');
@@ -28,15 +29,39 @@ const Login = ({ onLogin }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         const admin = email === 'admin@sound-stream.com' && password === 'admin';
-        const user = email === 'user@sound-stream.com' && password === 'user';
+        // const user = email === 'user@sound-stream.com' && password === 'user';
         if (admin) {
-            onLogin(true, 'Admin'); // Llama a onLogin con el estado de autenticación y el nombre del usuario
+            onLogin(true, { correo: email, nombre: 'Admin' }); // Llama a onLogin con el estado de autenticación y el usuario
             navigate('/Admin');
-        } else if (user) {
-            onLogin(true, 'user'); // Llama a onLogin con el estado de autenticación y el nombre del usuario
-            navigate('/user');
         } else {
-            alert('Credenciales incorrectas');
+            fetch(process.env.REACT_APP_API_URL + '/usuarios/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ correo: email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.error
+                    });
+                } else {
+                    onLogin(true, data); // Llama a onLogin con el estado de autenticación y el usuario
+                    navigate('/User');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al iniciar sesión'
+                });
+            });
         }
     };
 
