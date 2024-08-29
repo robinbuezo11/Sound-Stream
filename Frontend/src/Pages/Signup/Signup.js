@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaCheck, FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { isDarkMode } from '../../Utils/DarkMode';
+import Swal from 'sweetalert2';
 
 const Signup = () => {
     const [firstName, setFirstName] = useState('');
@@ -31,7 +32,55 @@ const Signup = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Enviar Formulario
+        // Validar que las contraseñas coincidan
+        if (!isMatch) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Las contraseñas no coinciden'
+            });
+            return;
+        }
+
+        // Enviar Formulario  
+        fetch(process.env.REACT_APP_API_URL + '/usuarios/registrar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                nombre: firstName,
+                apellido: lastName,
+                foto: profilePic,
+                correo: email,
+                password: password,
+                fecha_nacimiento: dob
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error
+                });
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Registro Exitoso',
+                    text: 'Tu cuenta ha sido creada exitosamente'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ocurrió un error al registrar tu cuenta'
+            });
+        });
     };
 
     const handleConfirmPasswordChange = (e) => {
@@ -158,6 +207,7 @@ const Signup = () => {
                                 )}
                             </div>
                         </div>
+                        {/* Foto de perfil obligatoria */}
                         <div className="col-span-2">
                             <label className={`block ${darkMode ? 'text-colorText' : 'text-gray-700'} mb-2`}>
                                 Foto de Perfil:
@@ -167,6 +217,7 @@ const Signup = () => {
                                     type="file" 
                                     id="profilePic" 
                                     onChange={(e) => setProfilePic(e.target.files[0])} 
+                                    required
                                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                 />
                                 <label htmlFor="profilePic" className={`w-full px-4 py-2 border rounded-lg bg-gray-20 flex items-center justify-center cursor-pointer hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-primary ${darkMode ? 'bg-dark text-colorText border-border' : 'text-gray-700'}`}>
