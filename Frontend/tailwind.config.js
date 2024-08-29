@@ -22,6 +22,7 @@ module.exports = {
         radio: '#7695FF',
         option: '#FF9874',
         hover: '#25282A',
+        like: '#645FFB'
       },
       fontFamily: {
         sans: ['Montserrat', 'sans-serif'],
