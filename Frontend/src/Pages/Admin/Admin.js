@@ -5,15 +5,23 @@ import Crud from '../../Components/Crud/Crud';
 import TopBar from '../../Components/TopBar/TopBar';
 import Home from '../../Components/Panels/Home';
 import Favorites from '../../Components/Panels/Favorites';
-import Radio from "../../Components/Panels/Radio"//Importación de Radio
-//import Crud from '../../Components/Crud/Crud';
+import Radio from "../../Components/Panels/Radio";
+import PlayList from '../../Components/Panels/PlayList';
 import '../../Utils/Scroll.css';
 import '../../Utils/Normalize.css';
 import { isDarkMode } from '../../Utils/DarkMode';
 
 const Admin = ({ userName }) => {
     const [darkMode, setDarkMode] = useState(isDarkMode());
-    const [activePanel, setActivePanel] = useState('Home'); // Panel activo
+    const [activePanel, setActivePanel] = useState(() => {
+        return localStorage.getItem('activePanel') || 'Home';
+    });
+    const [selectedPlaylist, setSelectedPlaylist] = useState('');
+    const [currentSong, setCurrentSong] = useState(localStorage.getItem('currentSong') || null);
+    const [songList, setSongList] = useState(JSON.parse(localStorage.getItem('songList')) || []);
+    const [playingSongIndex, setPlayingSongIndex] = useState(() => {
+        return parseInt(localStorage.getItem('playingSongIndex'), 10) || 0;
+    });
 
     useEffect(() => {
         const darkModeListener = window.matchMedia('(prefers-color-scheme: dark)');
@@ -28,33 +36,51 @@ const Admin = ({ userName }) => {
         };
     }, []);
 
+    const handlePanelChange = (panel, playlistName = '') => {
+        setActivePanel(panel);
+        localStorage.setItem('activePanel', panel);
+        if (panel === 'PlayList') {
+            setSelectedPlaylist(playlistName);
+        }
+    };
+
+    const handleSongSelect = (file, index, songList) => {
+        setCurrentSong(file);
+        setPlayingSongIndex(index);
+        setSongList(songList);
+        localStorage.setItem('currentSong', file);
+        localStorage.setItem('playingSongIndex', index);
+        localStorage.setItem('songList', JSON.stringify(songList));
+    };
+
+    const handleSongEnd = () => {
+        const nextIndex = (playingSongIndex + 1) % songList.length;
+        setPlayingSongIndex(nextIndex);
+        setCurrentSong(songList[nextIndex]);
+        localStorage.setItem('playingSongIndex', nextIndex);
+        localStorage.setItem('currentSong', songList[nextIndex]);
+    };
+
     return (
         <div className={`flex flex-col h-screen ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-white text-gray-700'}`}>
             <TopBar darkMode={darkMode} userName={userName} />
             <div className="flex flex-1 overflow-hidden">
                 <div className={`p-6 ${darkMode ? 'bg-secondaryBackground text-colorText' : 'bg-gray-200 text-gray-700'} overflow-y-auto custom-scrollbar`} style={{ width: '20rem', height: 'calc(100vh - 5.5rem)'}}>
-                    <MenuAdmin setActivePanel={setActivePanel} /> {/* Pasamos la función para cambiar el panel activo */}
+                    <MenuAdmin setActivePanel={handlePanelChange} />
                 </div>
                 <div className={`flex-1 overflow-y-auto custom-scrollbar ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-background text-gray-700'}`} style={{height: 'calc(100vh - 10.5rem)', marginTop: '5rem'}}>
-                    {activePanel === 'Home' && <Home darkMode={darkMode} />}
-                    {activePanel === 'Favorites' && <Favorites darkMode={darkMode} />}
+                    {activePanel === 'Home' && <Home darkMode={darkMode} setActivePanel={handlePanelChange} />}
+                    {activePanel === 'Favorites' && <Favorites darkMode={darkMode} onSongSelect={handleSongSelect} playingSongIndex={playingSongIndex} />}
                     {activePanel === 'Radio' && <Radio darkMode={darkMode} />}
-                    {activePanel === 'Crud' && <Crud darkMode={darkMode} />} {/* Añadido Crud aquí */}
-
+                    {activePanel === 'PlayList' && <PlayList darkMode={darkMode} playListName={selectedPlaylist} />}
+                    {activePanel === 'Crud' && <Crud darkMode={darkMode} />}
                 </div>
             </div>
             <div className={`fixed bottom-0 w-full p-4 ${darkMode ? 'bg-secondaryBackground text-colorText' : 'bg-gray-300 text-gray-700'}`} style={{ height: '5.5rem' }}>
                 <div className="flex items-center justify-between mb-2">
-                    <Player />
+                    <Player rute={currentSong} onSongEnd={handleSongEnd} />
                 </div>
-
-                </div>
-                <div className={`fixed bottom-0 w-full p-4 ${darkMode ? 'bg-secondaryBackground text-colorText' : 'bg-gray-300 text-gray-700'}`} style={{ height: '5.5rem' }}>
-                <div className="flex items-center justify-between mb-2">
-                    <Player />
-                </div>
-
-                </div>
+            </div>
         </div>
     );
 };

@@ -102,7 +102,7 @@ const Crud = ({ darkMode }) => {
     };
 
     return (
-        <div className={`w-full ${darkMode ? 'text-white bg-gray-900' : 'text-gray-700 bg-white'}`} style={{ height: 'calc(100vh - 11.5rem)' }}>
+        <div className={`w-full ${darkMode ? 'text-white bg-mainBackground' : 'text-gray-700 bg-white'}`} style={{ height: 'calc(100vh - 11.5rem)' }}>
             <h1 className="text-4xl font-semibold text-center mt-4 ml-4">Gestión de Canciones</h1>
             
             <form onSubmit={handleAddSong} className="mt-8 mx-4">

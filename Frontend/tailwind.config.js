@@ -18,6 +18,10 @@ module.exports = {
         colorText: '#f3f4f6',
         border: '#1f2937',
         text: '#1f2937',
+        home: '#505968',
+        radio: '#7695FF',
+        option: '#FF9874',
+        hover: '#25282A',
       },
       fontFamily: {
         sans: ['Montserrat', 'sans-serif'],

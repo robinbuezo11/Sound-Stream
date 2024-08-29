@@ -2,11 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import { FaBackward, FaPlay, FaPause, FaForward, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
 import './Player.css';
 
-const Player = () => {
+const Player = ({ rute, onSongEnd }) => {
     const songImage = 'https://images.unsplash.com/photo-1569519576545-fa1e60738b37?q=80&w=1597&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
     const songTitle = 'El Amar y el Querer';
     const songArtist = 'José José';
-    const audioSrc = require('./c1.mp3');
+    var audioSrc = require('../../Cancion/c1.mp3');
+    if (rute != null) {
+        audioSrc = require('../../Cancion/'+rute);
+    }
 
     const [progress, setProgress] = useState(0);
     const [volume, setVolume] = useState(100);
@@ -18,7 +21,7 @@ const Player = () => {
     const [duration, setDuration] = useState('-0:00');
 
     const audioRef = useRef(null);
-    const [curretVolume, setCurretVolume] = useState(1.0); // Valor inicial por defecto
+    const [curretVolume, setCurretVolume] = useState(1.0);
 
     useEffect(() => {
         const audio = audioRef.current;
@@ -45,15 +48,30 @@ const Player = () => {
                 setDuration(`-${formatTime(duration - current)}`);
             };
 
+            const handleEnded = () => {
+                if (onSongEnd) {
+                    onSongEnd();
+                }
+            };
+
             audio.addEventListener('loadedmetadata', handleLoadedMetadata);
             audio.addEventListener('timeupdate', handleTimeUpdate);
+            audio.addEventListener('ended', handleEnded);
 
             return () => {
                 audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
                 audio.removeEventListener('timeupdate', handleTimeUpdate);
+                audio.removeEventListener('ended', handleEnded);
             };
         }
-    }, []);
+    }, [onSongEnd]);
+
+    useEffect(() => {
+        if (rute != null && audioRef.current) {
+            audioRef.current.play();
+            setIsPlaying(true);
+        }
+    }, [rute]);
 
     const handleProgressChange = (e) => {
         const newProgress = e.target.value;
