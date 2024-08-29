@@ -8,6 +8,7 @@ import Favorites from '../../Components/Panels/Favorites';
 import Radio from "../../Components/Panels/Radio";
 import NewPlayList from "../../Components/Panels/NewPlayList";
 import PlayList from '../../Components/Panels/PlayList';
+import ProfilePanel from '../../Components/Panels/ProfilePanel';
 import '../../Utils/Scroll.css';
 import '../../Utils/Normalize.css';
 import { isDarkMode } from '../../Utils/DarkMode';
@@ -17,6 +18,7 @@ const Admin = ({ userName }) => {
     const [activePanel, setActivePanel] = useState(() => {
         return localStorage.getItem('activePanel') || 'Home';
     });
+    const [previousPanel, setPreviousPanel] = useState('');
     const [selectedPlaylist, setSelectedPlaylist] = useState('');
     const [currentSong, setCurrentSong] = useState(localStorage.getItem('currentSong') || null);
     const [songList, setSongList] = useState(JSON.parse(localStorage.getItem('songList')) || []);
@@ -38,6 +40,9 @@ const Admin = ({ userName }) => {
     }, []);
 
     const handlePanelChange = (panel, playlistName = '') => {
+        if (panel === 'ProfilePanel') {
+            setPreviousPanel(activePanel);
+        }
         setActivePanel(panel);
         localStorage.setItem('activePanel', panel);
         if (panel === 'PlayList') {
@@ -62,9 +67,15 @@ const Admin = ({ userName }) => {
         localStorage.setItem('currentSong', songList[nextIndex]);
     };
 
+    // Mostrar el panel desde el que se llama al perfil
+    const onCloseProfilePanel = () => {
+        console.log('Cerrando panel de perfil...');
+        setActivePanel(previousPanel || 'Home');
+    };
+
     return (
         <div className={`flex flex-col h-screen ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-white text-gray-700'}`}>
-            <TopBar darkMode={darkMode} userName={userName} />
+            <TopBar darkMode={darkMode} userName={userName} setActivePanel={handlePanelChange} />
             <div className="flex flex-1 overflow-hidden">
                 <div className={`p-6 ${darkMode ? 'bg-secondaryBackground text-colorText' : 'bg-gray-200 text-gray-700'} overflow-y-auto custom-scrollbar`} style={{ width: '20rem', height: 'calc(100vh - 5.5rem)'}}>
                     <MenuAdmin setActivePanel={handlePanelChange} />
@@ -76,6 +87,8 @@ const Admin = ({ userName }) => {
                     {activePanel === 'Radio' && <Radio darkMode={darkMode} />}
                     {activePanel === 'PlayList' && <PlayList darkMode={darkMode} playListName={selectedPlaylist} />}
                     {activePanel === 'Crud' && <Crud darkMode={darkMode} />}
+                    {/* {activePanel === 'ProfilePanel' && <ProfilePanel darkMode={darkMode} />} */}
+                    {activePanel === 'ProfilePanel' && <ProfilePanel onClose={onCloseProfilePanel} onSave={onCloseProfilePanel} />}
                 </div>
             </div>
             <div className={`fixed bottom-0 w-full p-4 ${darkMode ? 'bg-secondaryBackground text-colorText' : 'bg-gray-300 text-gray-700'}`} style={{ height: '5.5rem' }}>

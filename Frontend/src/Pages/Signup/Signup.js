@@ -60,7 +60,7 @@ const Signup = () => {
         .then(response => response.json())
         .then(data => {
             if (data.error) {
-                console.error('Error:', data.error);
+                console.error('Error:', data.message);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',

@@ -21,7 +21,7 @@ function App() {
       setUserName(user.nombre || '');
       localStorage.setItem('isAuthenticated', status);
       localStorage.setItem('userName', user.nombre || '');
-      localStorage.setItem('profilePic', user.foto || '');
+      localStorage.setItem('user', JSON.stringify(user));
   };
 
   return (

@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import { IoIosArrowBack, IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
 
-const TopBar = ({ darkMode, userName }) => {
+const TopBar = ({ darkMode, userName, setActivePanel }) => {
     const [dropdownVisible, setDropdownVisible] = useState(false);
-    const [profilePic, setProfilePic] = useState(require('../../Assets/img/usuario.png'));
+    const [user, setUser] = useState({foto: require('../../Assets/img/usuario.png')});
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
 
@@ -26,13 +26,13 @@ const TopBar = ({ darkMode, userName }) => {
 
     const EditProfile = () => {
         console.log('Redirigiendo a la edición de Perfil...');
-        navigate('/Profile');
+        setActivePanel('ProfilePanel');
     };
 
     useEffect(() => {
-        const userPic = localStorage.getItem('profilePic');
-        if (userPic) {
-            setProfilePic(userPic);
+        const localUser = localStorage.getItem('user');
+        if (localUser) {
+            setUser(JSON.parse(localUser));
         };
 
         const handleClickOutside = (event) => {
@@ -73,7 +73,7 @@ const TopBar = ({ darkMode, userName }) => {
             >
                 <div className="w-8 h-8 rounded-full overflow-hidden">
                     <img 
-                        src={profilePic}
+                        src={user.foto}
                         alt="User Profile" 
                         className="w-full h-full object-cover"
                     />

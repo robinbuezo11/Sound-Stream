@@ -31,7 +31,7 @@ const Login = ({ onLogin }) => {
         const admin = email === 'admin@sound-stream.com' && password === 'admin';
         // const user = email === 'user@sound-stream.com' && password === 'user';
         if (admin) {
-            onLogin(true, { correo: email, nombre: 'Admin' }); // Llama a onLogin con el estado de autenticación y el usuario
+            onLogin(true, { correo: email, nombre: 'Admin', foto: require('../../Assets/img/usuario.png') });
             navigate('/Admin');
         } else {
             fetch(process.env.REACT_APP_API_URL + '/usuarios/login', {
@@ -44,6 +44,7 @@ const Login = ({ onLogin }) => {
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
+                    console.error(data.message);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',

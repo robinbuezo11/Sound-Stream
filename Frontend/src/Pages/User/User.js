@@ -6,15 +6,18 @@ import Home from '../../Components/Panels/Home';
 import Favorites from '../../Components/Panels/Favorites';
 import Radio from "../../Components/Panels/Radio";
 import PlayList from '../../Components/Panels/PlayList';
+import ProfilePanel from '../../Components/Panels/ProfilePanel';
 import '../../Utils/Scroll.css';
 import '../../Utils/Normalize.css';
 import { isDarkMode } from '../../Utils/DarkMode';
+import Swal from 'sweetalert2';
 
 const User = ({ userName }) => {
     const [darkMode, setDarkMode] = useState(isDarkMode());
     const [activePanel, setActivePanel] = useState(() => {
         return localStorage.getItem('activePanel') || 'Home';
     });
+    const [previousPanel, setPreviousPanel] = useState('');
     const [selectedPlaylist, setSelectedPlaylist] = useState('');
     const [currentSong, setCurrentSong] = useState(localStorage.getItem('currentSong') || null);
     const [songList, setSongList] = useState(JSON.parse(localStorage.getItem('songList')) || []);
@@ -36,6 +39,9 @@ const User = ({ userName }) => {
     }, []);
 
     const handlePanelChange = (panel, playlistName = '') => {
+        if (panel === 'ProfilePanel') {
+            setPreviousPanel(activePanel);
+        }
         setActivePanel(panel);
         localStorage.setItem('activePanel', panel); // Guardar el panel activo en localStorage
         if (panel === 'PlayList') {
@@ -60,9 +66,62 @@ const User = ({ userName }) => {
         localStorage.setItem('currentSong', songList[nextIndex]);
     };
 
+    const handleProfileSave = (userId, newUserName, newUserLastName, profilePicture, newUserPassword, newUserDoB, password) => {
+        fetch(process.env.REACT_APP_API_URL + '/usuarios/actualizar', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: userId,
+                nombre: newUserName,
+                apellido: newUserLastName,
+                foto: profilePicture,
+                password: newUserPassword,
+                fecha_nacimiento: newUserDoB,
+                actualPassword: password
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.log(data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error
+                });
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Perfil actualizado',
+                    text: 'Tu perfil ha sido actualizado correctamente'
+                });
+                localStorage.setItem('user', JSON.stringify(data));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al actualizar el perfil'
+            });
+        });
+
+        // Cerrar el panel de perfil
+        setPreviousPanel('');
+        handlePanelChange(previousPanel);
+    };
+
+    const handleProfileClose = () => {
+        setPreviousPanel('');
+        handlePanelChange(previousPanel);
+    };
+
     return (
         <div className={`flex flex-col h-screen ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-white text-gray-700'}`}>
-            <TopBar darkMode={darkMode} userName={userName} />
+            <TopBar darkMode={darkMode} userName={userName} setActivePanel={handlePanelChange} />
             <div className="flex flex-1 overflow-hidden">
                 <div className={`p-6 ${darkMode ? 'bg-secondaryBackground text-colorText' : 'bg-gray-200 text-gray-700'} overflow-y-auto custom-scrollbar`} style={{ width: '20rem', height: 'calc(100vh - 5.5rem)'}}>
                     <Menu setActivePanel={handlePanelChange} /> {/* Pasamos la función para cambiar el panel activo */}
@@ -72,6 +131,7 @@ const User = ({ userName }) => {
                     {activePanel === 'Favorites' && <Favorites darkMode={darkMode} onSongSelect={handleSongSelect} playingSongIndex={playingSongIndex} />}
                     {activePanel === 'Radio' && <Radio darkMode={darkMode} />}
                     {activePanel === 'PlayList' && <PlayList darkMode={darkMode} playListName={selectedPlaylist} />}
+                    {activePanel === 'ProfilePanel' && <ProfilePanel onSave={handleProfileSave} onClose={handleProfileClose} />}
                 </div>
             </div>
             <div className={`fixed bottom-0 w-full p-4 ${darkMode ? 'bg-secondaryBackground text-colorText' : 'bg-gray-300 text-gray-700'}`} style={{ height: '5.5rem' }}>

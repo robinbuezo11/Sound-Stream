@@ -1,20 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const ProfilePanel = ({ userName, userLastName, userEmail, onClose, onSave }) => {
+// const ProfilePanel = ({ userName, userLastName, userEmail, onClose, onSave }) => {
+const ProfilePanel = ({onClose, onSave}) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [newUserName, setNewUserName] = useState(userName);
-    const [newUserLastName, setNewUserLastName] = useState(userLastName);
-    const [newUserEmail, setNewUserEmail] = useState(userEmail);
+    // const [newUserName, setNewUserName] = useState(userName);
+    // const [newUserLastName, setNewUserLastName] = useState(userLastName);
+    // const [newUserEmail, setNewUserEmail] = useState(userEmail);
+    const [user, setUser] = useState({});
+    const [userId, setUserId] = useState('');
+    const [newUserName, setNewUserName] = useState('');
+    const [newUserLastName, setNewUserLastName] = useState('');
+    const [newUserEmail, setNewUserEmail] = useState('');
+    const [newUserPassword, setNewUserPassword] = useState('');
+    const [newUserDoB, setNewUserDoB] = useState('');
     const [password, setPassword] = useState('');
-    const [profilePicture, setProfilePicture] = useState('https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=387&auto=format&fit=crop');
+    const [profilePicture, setProfilePicture] = useState(require('../../Assets/img/usuario.png'));
+
+    useEffect(() => {
+        let storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            storedUser = JSON.parse(storedUser);
+            setUserId(storedUser.id);
+            setUser(storedUser);
+            setNewUserName(storedUser.nombre);
+            setNewUserLastName(storedUser.apellido);
+            setNewUserEmail(storedUser.correo);
+            setProfilePicture(storedUser.foto);
+            setNewUserDoB(new Date(storedUser.fecha_nacimiento).toISOString().split('T')[0]);
+        }
+    }, []);
 
     const handleSave = () => {
-        if (password === 'correct-password') { 
-            onSave(newUserName, newUserLastName, newUserEmail, profilePicture);
-            setIsEditing(false);
-        } else {
-            alert('Contraseña incorrecta. No se pueden guardar los cambios.');
-        }
+        onSave(userId, newUserName, newUserLastName, profilePicture, newUserPassword, newUserDoB, password);
+        setIsEditing(false);
     };
 
     const handleProfilePictureChange = (e) => {
@@ -26,9 +44,14 @@ const ProfilePanel = ({ userName, userLastName, userEmail, onClose, onSave }) =>
         }
     };
 
+    const formatDate = (date) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(date).toLocaleDateString('es-ES', options);
+    };
+
     return (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50">
-            <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-96">
+            <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-full max-w-md">
                 <h2 className="text-2xl mb-4">Mi Perfil</h2>
                 <div className="flex flex-col items-center">
                     <label className="relative cursor-pointer">
@@ -37,23 +60,27 @@ const ProfilePanel = ({ userName, userLastName, userEmail, onClose, onSave }) =>
                             alt="User Avatar" 
                             className="w-24 h-24 rounded-full mb-4 object-cover"
                         />
-                        <input 
-                            type="file" 
-                            className="absolute inset-0 opacity-0 cursor-pointer" 
-                            onChange={handleProfilePictureChange} 
-                        />
+                        {isEditing && (
+                            <input 
+                                type="file" 
+                                className="hidden" 
+                                onChange={handleProfilePictureChange}
+                            />
+                        )}
                     </label>
                     {!isEditing ? (
                         <>
-                            <p><strong>Nombre:</strong> {newUserName}</p>
-                            <p><strong>Apellido:</strong> {newUserLastName}</p>
-                            <p><strong>Correo electrónico:</strong> {newUserEmail}</p>
-                            <button 
+                            <p className="text-lg font-semibold">{newUserName} {newUserLastName}</p>
+                            <p className="text-sm">{newUserEmail}</p>
+                            <p className="text-sm mt-2">{formatDate(user.fecha_nacimiento)}</p>
+                            {user.nombre !== 'Admin' ? (
+                                <button 
                                 onClick={() => setIsEditing(true)} 
                                 className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
                             >
                                 Editar
                             </button>
+                            ) : (<> </>)}
                         </>
                     ) : (
                         <>
@@ -69,11 +96,27 @@ const ProfilePanel = ({ userName, userLastName, userEmail, onClose, onSave }) =>
                                 onChange={(e) => setNewUserLastName(e.target.value)}
                                 placeholder="Nuevo apellido"
                             />
+                            {/* Correo no editable */}
                             <input 
                                 className="border border-gray-600 rounded p-2 mt-2 bg-gray-700 text-white w-full"
                                 value={newUserEmail}
                                 onChange={(e) => setNewUserEmail(e.target.value)}
                                 placeholder="Nuevo correo"
+                                disabled
+                            />
+                            <input 
+                                type="date"
+                                className="border border-gray-600 rounded p-2 mt-2 bg-gray-700 text-white w-full"
+                                value={newUserDoB}
+                                onChange={(e) => setNewUserDoB(e.target.value)}
+                                placeholder="Fecha de nacimiento"
+                            />
+                            <input 
+                                type="password"
+                                className="border border-gray-600 rounded p-2 mt-2 bg-gray-700 text-white w-full"
+                                value={newUserPassword}
+                                onChange={(e) => setNewUserPassword(e.target.value)}
+                                placeholder="Nueva contraseña"
                             />
                             <input 
                                 type="password"
