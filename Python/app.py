@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_cors import CORS
 import db as db
-from controller.clienteController import BlueprintCliente
 from controller.LoginController import BlueprintLogin
+from controller.cancionController import BlueprintCancion
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -11,9 +11,8 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 def hola():
     return "<h1>'Seminario de Sistemas 1 - Practica 1'</h1>"
 
-app.register_blueprint(BlueprintLogin)
-app.register_blueprint(BlueprintCliente)
-
+app.register_blueprint(BlueprintLogin, url_prefix='/usuarios')
+app.register_blueprint(BlueprintCancion, url_prefix='/canciones')
 
 
 if __name__ == "__main__":
