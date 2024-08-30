@@ -53,8 +53,6 @@ const TopBar = ({ darkMode, userName, setActivePanel }) => {
             className={`z-50 fixed top-0 right-0 p-4 flex items-center ${darkMode ? 'bg-inputBackground text-white' : 'bg-gray-200 text-gray-800'}`} 
             style={{ height: '5rem', width: 'calc(100% - 20rem)' }}
         >
-            <IoIosArrowBack className="ml-10 mr-1 text-3xl cursor-pointer" />
-            <IoIosArrowForward className="ml-1 mr-10 text-3xl cursor-pointer" />
             <div className="flex items-center">
                 <div className="relative mx-8 flex-1 max-w-xs">
                     <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
