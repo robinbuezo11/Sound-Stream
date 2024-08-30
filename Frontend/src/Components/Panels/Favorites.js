@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { FaHeart } from 'react-icons/fa';
-import { FiBarChart2 } from 'react-icons/fi';
 import Song from './Song';
 
 const Favorites = ({ darkMode, onSongSelect, playingSongIndex }) => {

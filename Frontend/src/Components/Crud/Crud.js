@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { MdInfoOutline } from 'react-icons/md';
+import { RxUpdate } from 'react-icons/rx';
+import { IoTrashOutline } from 'react-icons/io5';
 
 const Crud = ({ darkMode }) => {
     const [songFile, setSongFile] = useState(null);
@@ -60,6 +63,24 @@ const Crud = ({ darkMode }) => {
 
     const handleViewDetails = (song) => {
         setSelectedSong(song);
+    };
+
+    const handleCancelAddSong = () => {
+        setSongFile(null);
+        setTitle('');
+        setArtist('');
+        setPhoto(null);
+        setDuration(null);
+        setShowDetailsForm(false);
+    };
+
+    const handleCancelUpdate = () => {
+        setUpdateSong(null);
+        setNewTitle('');
+        setNewArtist('');
+        setNewSongFile(null);
+        setNewPhoto(null);
+        setIsUpdating(false);
     };
 
     const handleCloseDetails = () => {
@@ -166,6 +187,13 @@ const Crud = ({ darkMode }) => {
                         >
                             Guardar Canción
                         </button>
+                        <button
+                            type="button"
+                            onClick={handleCancelAddSong}
+                            className={`w-full py-2 px-4 mt-2 rounded ${darkMode ? 'bg-gray-500 text-white hover:bg-gray-600' : 'bg-gray-700 text-white hover:bg-gray-800'}`}
+                        >
+                            Cancelar
+                        </button>
                     </div>
                 )}
             </form>
@@ -217,11 +245,12 @@ const Crud = ({ darkMode }) => {
                             type="submit"
                             className={`w-full py-2 px-4 rounded ${darkMode ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-blue-700 text-white hover:bg-blue-800'}`}
                         >
-                            Guardar Cambios
+                            Actualizar Canción
                         </button>
                         <button
-                            onClick={() => setIsUpdating(false)}
-                            className={`mt-2 w-full py-2 px-4 rounded ${darkMode ? 'bg-gray-600 text-white hover:bg-gray-700' : 'bg-gray-300 text-gray-800 hover:bg-gray-400'}`}
+                            type="button"
+                            onClick={handleCancelUpdate}
+                            className={`w-full py-2 px-4 mt-2 rounded ${darkMode ? 'bg-gray-500 text-white hover:bg-gray-600' : 'bg-gray-700 text-white hover:bg-gray-800'}`}
                         >
                             Cancelar
                         </button>
@@ -229,70 +258,67 @@ const Crud = ({ darkMode }) => {
                 </div>
             )}
 
-            {/* Tabla de canciones cargadas */}
-            {songsList.length > 0 && (
-                <div className="mt-8 mx-4">
-                    <h2 className="text-2xl font-semibold mb-4">Canciones Cargadas</h2>
-                    <table className="table-auto w-full">
-                        <thead>
-                            <tr>
-                                <th className="px-4 py-2">Portada</th>
-                                <th className="px-4 py-2">Nombre</th>
-                                <th className="px-4 py-2">Artista</th>
-                                <th className="px-4 py-2">Actualizar</th>
-                                <th className="px-4 py-2">Eliminar</th>
-                                <th className="px-4 py-2">Detalle</th>
+            <div className="mt-8 mx-4">
+                <h2 className="text-2xl font-semibold mb-4">Lista de Canciones</h2>
+                {songsList.length > 0 ? (
+                    <table className={`min-w-full ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-white text-gray-700'}`}>
+                        <thead className="bg-gray-200">
+                            <tr className={`w-full ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-white text-gray-700'}`}>
+                                <th className="py-2 px-4 text-left">Título</th>
+                                <th className="py-2 px-4 text-left">Artista</th>
+                                <th className="py-2 px-4 text-left">Duración</th>
+                                <th className="py-2 px-4 text-left">Fotografía</th>
+                                <th className="py-2 px-4 text-left">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {songsList.map((song) => (
+                            {songsList.map(song => (
                                 <tr key={song.id}>
-                                    <td className="border px-4 py-2">
-                                        <img src={song.photo} alt="Foto de canción" className="w-16 h-16" />
+                                    <td className="py-2 px-4 ">{song.title}</td>
+                                    <td className="py-2 px-4 ">{song.artist}</td>
+                                    <td className="py-2 px-4 ">{song.duration}</td>
+                                    <td className="py-2 px-4 ">
+                                        <img src={song.photo} alt={song.title} className="w-16 h-16 object-cover" />
                                     </td>
-                                    <td className="border px-4 py-2">{song.title}</td>
-                                    <td className="border px-4 py-2">{song.artist}</td>
-                                    <td className="border px-4 py-2">
+                                    <td className="py-2 px-4">
+                                        <button
+                                            onClick={() => handleViewDetails(song)}
+                                            className={`mr-2 py-1 px-3 rounded ${darkMode ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-blue-700 text-white hover:bg-blue-800'}`}
+                                        >
+                                            <MdInfoOutline size={24} />
+                                        </button>
                                         <button
                                             onClick={() => handleUpdateClick(song)}
-                                            className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
+                                            className={`mr-2 py-1 px-3 rounded ${darkMode ? 'bg-yellow-500 text-white hover:bg-yellow-600' : 'bg-yellow-700 text-white hover:bg-yellow-800'}`}
                                         >
-                                            ⟳
+                                            <RxUpdate size={24} />
                                         </button>
-                                    </td>
-                                    <td className="border px-4 py-2">
-                                        <button 
-                                            onClick={() => handleDeleteSong(song.id)} 
-                                            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                        <button
+                                            onClick={() => handleDeleteSong(song.id)}
+                                            className={`py-1 px-3 rounded ${darkMode ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-red-700 text-white hover:bg-red-800'}`}
                                         >
-                                            🗑️
-                                        </button>
-                                    </td>
-                                    <td className="border px-4 py-2">
-                                        <button 
-                                            onClick={() => handleViewDetails(song)}
-                                            className={`bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 ${darkMode ? 'bg-green-600 hover:bg-green-700' : ''}`}
-                                        >
-                                            ⓘ
+                                            <IoTrashOutline size={24} />
                                         </button>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-                </div>
-            )}
+                ) : (
+                    <p>No hay canciones en la lista.</p>
+                )}
+            </div>
 
-{/* Panel de detalles de la canción seleccionada */}
-{selectedSong && (
-    <div className={`fixed inset-0 ${darkMode ? 'bg-gray-900' : 'bg-gray-900'} bg-opacity-75 flex justify-center items-center z-50`}>
-        <div className={`bg-${darkMode ? 'gray-800' : 'white'} p-6 rounded-lg shadow-lg w-3/4 max-w-2xl`}>
+            {selectedSong && (
+    <div className={`fixed inset-0 ${darkMode ? 'bg-mainBackground' : 'bg-gray-900'} bg-opacity-75 flex justify-center items-center z-50`}>
+        <div className={`relative bg-${darkMode ? 'secondaryBackground' : 'white'} p-6 rounded-lg shadow-lg w-3/4 max-w-2xl`}>
             <h2 className="text-2xl font-semibold mb-4">Detalles de la Canción</h2>
             <button 
                 onClick={handleCloseDetails}
-                className={`absolute top-2 right-2 ${darkMode ? 'bg-red-500' : 'bg-red-500'} text-white px-4 py-2 rounded hover:bg-red-600`}
+                className={`absolute top-2 right-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-600 text-white hover:bg-gray-700`}
+                style={{ fontSize: '1.5rem' }}
             >
-                ❌
+                &times;
             </button>
             <div className="flex items-start mb-4">
                 <div className="w-1/3 mr-4">
@@ -321,7 +347,8 @@ const Crud = ({ darkMode }) => {
             </div>
         </div>
     </div>
-            )}
+)}
+
         </div>
     );
 };

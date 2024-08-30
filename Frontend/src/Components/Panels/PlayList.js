@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { FaHeart } from 'react-icons/fa';
 import Song from './Song';
 
 const PlayList = ({ darkMode, playListName }) => {

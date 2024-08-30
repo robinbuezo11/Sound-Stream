@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaCheck, FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FiUpload } from "react-icons/fi";
 import { Link } from 'react-router-dom';
 import { isDarkMode } from '../../Utils/DarkMode';
 import Swal from 'sweetalert2';
@@ -14,7 +15,7 @@ const Signup = () => {
     const [profilePic, setProfilePic] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
     const [isMatch, setIsMatch] = useState(null);
-    const [darkMode, setDarkMode] = useState(isDarkMode()); // Estado para el modo oscuro
+    const [darkMode, setDarkMode] = useState(isDarkMode());
 
     useEffect(() => {
         // Actualiza el estado cuando cambian las preferencias del sistema
@@ -235,6 +236,7 @@ const Signup = () => {
                                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                 />
                                 <label htmlFor="profilePic" className={`w-full px-4 py-2 border rounded-lg bg-gray-20 flex items-center justify-center cursor-pointer hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-primary ${darkMode ? 'bg-dark text-colorText border-border' : 'text-gray-700'}`}>
+                                    <FiUpload className="mr-2 size-6" />
                                     {profilePic ? profilePic.name : 'Selecciona una foto'}
                                 </label>
                             </div>
