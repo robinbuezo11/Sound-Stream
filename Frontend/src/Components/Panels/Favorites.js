@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaHeart } from 'react-icons/fa';
 import { FiBarChart2 } from 'react-icons/fi';
+import Song from './Song';
 
 const Favorites = ({ darkMode, onSongSelect, playingSongIndex }) => {
     const [likedSongs, setLikedSongs] = useState(JSON.parse(localStorage.getItem('likedSongs')) || []);
@@ -57,35 +58,21 @@ const Favorites = ({ darkMode, onSongSelect, playingSongIndex }) => {
                     <tr className={`w-full ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-white text-gray-700'}`}>
                         <th className="p-2 text-left text-sm w-10">No.</th>
                         <th className="p-2 text-left text-sm">Título</th>
-                        <th className="p-2 text-left text-sm w-20 text-right">Duration</th>
+                        <th className="p-2 text-left text-sm w-20">Duration</th>
+                        <th className="p-2 text-left text-sm w-16"></th>
                         <th className="p-2 text-left text-sm w-16"></th>
                     </tr>
                 </thead>
                 <tbody>
                     {songs.map((song, index) => (
-                        <tr key={index} className={`${darkMode ? 'bg-darkBackground text-colorText hover:bg-hover' : 'bg-white text-gray-700 hover:bg-gray-100'}`}>
-                            <td className="p-2 text-sm w-10">{index + 1}</td>
-                            <td className="p-2 text-sm flex items-center space-x-3">
-                                <img onClick={() => handleSongClick(index, song.file)} src={song.image} alt={song.name} className="w-12 h-12 object-cover cursor-pointer" />
-                                <div className="flex items-center">
-                                    <div>
-                                        <div>{song.name}</div>
-                                        <div className="text-gray-500">{song.artist}</div>
-                                    </div>
-                                    {playingSong === index && (
-                                        <FiBarChart2 className="ml-2 text-green-500 w-5 h-5" />
-                                    )}
-                                </div>
-                            </td>
-                            <td className="p-2 text-sm w-20 text-right">{song.duration}</td>
-                            <td className="p-2 text-sm w-16 text-center">
-                                <button onClick={() => toggleLike(index)}>
-                                    <FaHeart
-                                        className={`w-6 h-6 ${likedSongs.includes(index) ? 'text-red-500' : 'text-gray-400'} transition-colors duration-200`}
-                                    />
-                                </button>
-                            </td>
-                        </tr>
+                        <Song
+                            key={index}
+                            index={index}
+                            song={song}
+                            likedSongs={likedSongs}
+                            toggleLike={toggleLike}
+                            darkMode={darkMode}
+                        />
                     ))}
                 </tbody>
             </table>

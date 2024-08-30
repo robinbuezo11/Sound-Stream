@@ -7,9 +7,9 @@ const Player = ({ rute, onSongEnd }) => {
     const songTitle = 'El Amar y el Querer';
     const songArtist = 'José José';
     var audioSrc = require('../../Cancion/c1.mp3');
-    if (rute != null) {
-        audioSrc = require('../../Cancion/'+rute);
-    }
+    // if (rute != null) {
+    //     audioSrc = require('../../Cancion/'+rute);
+    // }
 
     const [progress, setProgress] = useState(0);
     const [volume, setVolume] = useState(100);
