@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app
-from util.configPage import hash_password, guardarObjeto, check_password
+from util.configPage import hash_password, guardarObjeto, check_password, eliminarObjeto
 from db import query, query_con_retorno
 from pymysql.err import MySQLError
 from io import BytesIO
@@ -18,25 +18,30 @@ def login():
         # Validaciones
         if not correo or not password:
             return jsonify({"error": "Correo o contraseña vacíos"}), 400
-        # Consulta del usuario por correo
+        # Valida que exista el usuario
         usuario = query_con_retorno("SELECT * FROM USUARIO WHERE correo = %s", (correo,))
-        # Depuración: imprime el resultado de la consulta
-        print("Resultado de la consulta:", usuario)
         if not usuario:
             return jsonify({"error": "Correo o contraseña incorrectos"}), 401
         # Verificación de la contraseña
         usuario = usuario[0]
         if not check_password(password, usuario['PASSWORD']):
             return jsonify({"error": "Correo o contraseña incorrectos"}), 401
-        # Opcionalmente, eliminar la contraseña del resultado antes de devolver el usuario
         usuario.pop('PASSWORD', None)
-        return jsonify({"message": "Login exitoso", "usuario": usuario}), 200
+        usuario_data = {
+            "id": usuario['ID'],
+            "nombre": usuario['NOMBRE'],
+            "apellido": usuario['APELLIDO'],
+            "foto": usuario['FOTO'],
+            "correo": usuario['CORREO'],
+            "fecha_nacimiento": usuario['FECHA_NACIMIENTO']
+        }
+        return jsonify(usuario_data), 200
     except MySQLError as e:
         print(f"Error en la consulta de login: {e}")
-        return jsonify({"error": "Error en el proceso de login"}), 500
+        return jsonify({"error": "Error en el servidor"}), 500
     except Exception as e:
         print(f"Error inesperado: {e}")
-        return jsonify({"error": "Error inesperado"}), 500
+        return jsonify({"error": "Error en el servidor"}), 500
 
 @BlueprintLogin.route('/registrar', methods=['POST'])
 def registrar():
@@ -55,13 +60,10 @@ def registrar():
         correo = query_con_retorno("SELECT * FROM usuario WHERE correo = %s", (email,))
         if correo:
             return jsonify({"error": "El correo ya está registrado"}), 400
-        # Cifrar la contraseña
         cifrar_password = hash_password(password)
-        # Procesar la imagen
         if foto:
-            # Decodificar la imagen
-            foto_bytes = base64.b64decode(foto.split(',')[1])  # Decodifica la imagen
-            extension = 'jpg'  # Puedes mejorar esto determinando la extensión correcta a partir del base64 si es necesario
+            foto_bytes = base64.b64decode(foto.split(',')[1])
+            extension = 'jpg'
             nombre_imagen = guardarObjeto(BytesIO(foto_bytes), extension, "Fotos/")
             path_foto = nombre_imagen['Location']
         else:
@@ -77,14 +79,78 @@ def registrar():
         print(f"Error inesperado: {e}")
         return jsonify({"error": "Error inesperado"}), 500
     
+@BlueprintLogin.route('/actualizar', methods=['PUT'])
+def actualizar_usuario():
+    try:
+        data = request.json
+        id = data.get('id')
+        nombres = data.get('nombre')
+        apellidos = data.get('apellido')
+        nueva_foto = data.get('foto')
+        nueva_password = data.get('password')
+        fecha_nacimiento = data.get('fecha_nacimiento')
+        actual_password = data.get('actualPassword')
+        # Verificar que el usuario exista
+        if id is None or not nombres or not apellidos or not actual_password:
+            return jsonify({"error": "Datos incompletos"}), 400
+        usuario = query_con_retorno("SELECT * FROM usuario WHERE id = %s", (id,))
+        if not usuario:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+        usuario = usuario[0]
+        # Verificación de la contraseña actual
+        if not check_password(actual_password, usuario['PASSWORD']):
+            return jsonify({"error": "Contraseña actual incorrecta"}), 401
+        if nueva_foto:
+            eliminarObjeto(usuario['FOTO'])
+            foto_bytes = base64.b64decode(nueva_foto.split(',')[1])
+            extension = 'jpg'
+            nueva_foto_obj = guardarObjeto(BytesIO(foto_bytes), extension, "Fotos/")
+            nueva_foto_url = nueva_foto_obj['Location']
+        else:
+            nueva_foto_url = usuario['FOTO']
+        if nueva_password:
+            nueva_password_cifrada = hash_password(nueva_password)
+        else:
+            nueva_password_cifrada = usuario['PASSWORD']
+        query("UPDATE usuario SET NOMBRE = %s, APELLIDO = %s, FOTO = %s, PASSWORD = %s, FECHA_NACIMIENTO = %s WHERE id = %s",
+              (nombres, apellidos, nueva_foto_url, nueva_password_cifrada, fecha_nacimiento, id))
+        usuario_actualizado = query_con_retorno("SELECT * FROM usuario WHERE id = %s", (id,))
+
+        if not usuario_actualizado:
+            return jsonify({"error": "No se pudo obtener la información actualizada"}), 500
+        usuario_actualizado = usuario_actualizado[0]
+        usuario_data = {
+            "id": usuario_actualizado['ID'],
+            "nombre": usuario_actualizado['NOMBRE'],
+            "apellido": usuario_actualizado['APELLIDO'],
+            "foto": usuario_actualizado['FOTO'],
+            "correo": usuario_actualizado['CORREO'],
+            "fecha_nacimiento": usuario_actualizado['FECHA_NACIMIENTO']
+        }
+        return jsonify(usuario_data), 200
+
+    except MySQLError as e:
+        print(f"Error al actualizar el usuario: {e}")
+        return jsonify({"error": "Error al actualizar el usuario"}), 500
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        return jsonify({"error": "Error inesperado"}), 500
+
 
 ## -- USUARIO -- ##
 @BlueprintLogin.route('/', methods=['GET'])
 def obtener_usuarios():
     try:
-        users = query_con_retorno("SELECT * FROM USUARIO")
-        users_list = [dict(zip(['id', 'name', 'email', 'age'], user)) for user in users]
-        return jsonify(users_list), 200
+        usuario = query_con_retorno("SELECT * FROM USUARIO")
+        usuario_data = {
+            "id": usuario['ID'],
+            "nombre": usuario['NOMBRE'],
+            "apellido": usuario['APELLIDO'],
+            "foto": usuario['FOTO'],
+            "correo": usuario['CORREO'],
+            "fecha_nacimiento": usuario['FECHA_NACIMIENTO']
+        }
+        return jsonify(usuario_data), 200
     except MySQLError as e:
         current_app.logger.error(f"Error fetching users: {e}")
         return jsonify({"error": "Failed to fetch users"}), 500
@@ -155,5 +221,3 @@ def modificarPerfil(id):
     except Exception as e:
         logger.error(f"Unexpected error: {e}")
         return jsonify({"error": "Ocurrió un error inesperado"}), 500
-
-
