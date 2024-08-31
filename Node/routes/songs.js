@@ -172,4 +172,89 @@ router.delete('/eliminar', async (req, res) => {
     console.log('DELETE /canciones/eliminar');
 });
 
+router.get('/favoritas', async (req, res) => {
+    try {
+        const id = req.query.idUsuario;
+        // Validar los datos
+        if (!id) {
+            return res.status(400).json({ error: 'Datos incompletos', message: 'Datos incompletos' });
+        }
+        // Verificar que el usuario exista
+        const [rows] = await pool.query('SELECT * FROM USUARIO WHERE id = ?', [id]);
+        if (rows.length === 0) {
+            return res.status(400).json({ error: 'El usuario no existe', message: 'El usuario no existe' });
+        }
+        // Obtener las canciones favoritas del usuario
+        const [rows2] = await pool.query('SELECT * FROM CANCION WHERE ID IN (SELECT ID_CANCION FROM FAVORITO WHERE ID_USUARIO = ?)', [id]);
+
+        const canciones = rows2.map(cancion => {
+            return {
+                id: cancion.ID,
+                nombre: cancion.NOMBRE,
+                cancion: cancion.CANCION,
+                imagen: cancion.IMAGEN,
+                duracion: cancion.DURACION,
+                artista: cancion.ARTISTA
+            };
+        });
+        res.json(canciones);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Error en el servidor', message: error.message });
+    }
+    console.log('GET /canciones/favoritas?idUsuario=' + req.query.idUsuario);
+});
+
+router.put('/favorita', async (req, res) => {
+    try {
+        const idCancion = req.query.idCancion;
+        const idUsuario = req.query.idUsuario;
+        // Validar los datos
+        if (!idCancion || !idUsuario) {
+            return res.status(400).json({ error: 'Datos incompletos', message: 'Datos incompletos' });
+        }
+        // Verificar que la cancion y el usuario existan
+        const [rows] = await pool.query('SELECT * FROM CANCION WHERE id = ?', [idCancion]);
+        if (rows.length === 0) {
+            return res.status(400).json({ error: 'La cancion no existe', message: 'La cancion no existe' });
+        }
+
+        const [rows2] = await pool.query('SELECT * FROM USUARIO WHERE id = ?', [idUsuario]);
+        if (rows2.length === 0) {
+            return res.status(400).json({ error: 'El usuario no existe', message: 'El usuario no existe' });
+        }
+
+        // Verificar si la cancion ya es favorita
+        let fav = false;
+        const [rows3] = await pool.query('SELECT * FROM FAVORITO WHERE ID_USUARIO = ? AND ID_CANCION = ?', [idUsuario, idCancion]);
+        if (rows3.length > 0) {
+            fav = true;
+        }
+
+        // Agregar o eliminar la cancion de favoritos
+        if (fav) {
+            await pool.query('DELETE FROM FAVORITO WHERE ID_USUARIO = ? AND ID_CANCION = ?', [idUsuario, idCancion]);
+        } else {
+            await pool.query('INSERT INTO FAVORITO (ID_USUARIO, ID_CANCION) VALUES (?, ?)', [idUsuario, idCancion]);
+        }
+
+        // Obtener la cancion actualizada
+        const [rows4] = await pool.query('SELECT * FROM CANCION WHERE id = ?', [idCancion]);
+        const cancion = {
+            id: rows4[0].ID,
+            nombre: rows4[0].NOMBRE,
+            cancion: rows4[0].CANCION,
+            imagen: rows4[0].IMAGEN,
+            duracion: rows4[0].DURACION,
+            artista: rows4[0].ARTISTA,
+            favorita: !fav
+        };
+        res.json(cancion);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Error en el servidor', message: error.message });
+    }
+    console.log('PUT /canciones/favorita?idCancion=' + req.query.idCancion + '&idUsuario=' + req.query.idUsuario);
+});
+
 module.exports = router;

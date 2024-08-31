@@ -81,7 +81,7 @@ const Admin = ({ userName }) => {
                     <MenuAdmin setActivePanel={handlePanelChange} />
                 </div>
                 <div className={`flex-1 overflow-y-auto custom-scrollbar ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-background text-gray-700'}`} style={{height: 'calc(100vh - 10.5rem)', marginTop: '5rem'}}>
-                    {activePanel === 'Home' && <Home darkMode={darkMode} setActivePanel={handlePanelChange} />}
+                    {activePanel === 'Home' && <Home darkMode={darkMode} setActivePanel={handlePanelChange} handleSongSelect={handleSongSelect} />}
                     {activePanel === 'Favorites' && <Favorites darkMode={darkMode} onSongSelect={handleSongSelect} playingSongIndex={playingSongIndex} />}
                     {activePanel === 'NewPlayList' && <NewPlayList darkMode={darkMode} />}
                     {activePanel === 'Radio' && <Radio darkMode={darkMode} />}

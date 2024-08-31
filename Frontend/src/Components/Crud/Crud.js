@@ -25,7 +25,18 @@ const Crud = ({ darkMode }) => {
     useEffect(() => {
         fetch(process.env.REACT_APP_API_URL + '/canciones')
         .then(response => response.json())
-        .then(data => setSongsList(data))
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error
+                });
+                return;
+            }
+            setSongsList(data);
+        })
     }, []);
 
     const handleSongChange = (e) => {

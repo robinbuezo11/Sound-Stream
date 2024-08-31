@@ -3,14 +3,7 @@ import { FaBackward, FaPlay, FaPause, FaForward, FaVolumeUp, FaVolumeMute } from
 import './Player.css';
 
 const Player = ({ rute, onSongEnd }) => {
-    const songImage = 'https://images.unsplash.com/photo-1569519576545-fa1e60738b37?q=80&w=1597&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
-    const songTitle = 'El Amar y el Querer';
-    const songArtist = 'José José';
-    var audioSrc = require('../../Cancion/c1.mp3');
-    // if (rute != null) {
-    //     audioSrc = require('../../Cancion/'+rute);
-    // }
-
+    const [song, setSong] = useState({});
     const [progress, setProgress] = useState(0);
     const [volume, setVolume] = useState(100);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -22,6 +15,42 @@ const Player = ({ rute, onSongEnd }) => {
 
     const audioRef = useRef(null);
     const [curretVolume, setCurretVolume] = useState(1.0);
+
+    useEffect(() => {
+        const audio = audioRef.current;
+    
+        if (rute != null && audio) {
+            // Escucha cuando se carguen los metadatos (como la duración)
+            const handleLoadedMetadata = () => {
+                if (isFinite(audio.duration)) {
+                    const formatTime = (time) => {
+                        const minutes = Math.floor(time / 60);
+                        const seconds = Math.floor(time % 60);
+                        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                    };
+                    setDuration(`-${formatTime(audio.duration)}`);
+                } else {
+                    console.error('Duración no válida después de cargar los metadatos');
+                    setDuration('-0:00');
+                }
+            };
+    
+            audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+    
+            if (isPlaying) {
+                audio.play().catch(error => {
+                    console.error('Error al reproducir el audio:', error);
+                });
+            } else {
+                audio.pause();
+            }
+    
+            // Limpia el evento cuando cambie la canción o se desmonte el componente
+            return () => {
+                audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+            };
+        }
+    }, [rute, isPlaying]);
 
     useEffect(() => {
         const audio = audioRef.current;
@@ -67,9 +96,22 @@ const Player = ({ rute, onSongEnd }) => {
     }, [onSongEnd]);
 
     useEffect(() => {
+        if (localStorage.getItem('songList') && localStorage.getItem('playingSongIndex')) {
+            const songList = JSON.parse(localStorage.getItem('songList'));
+            const playingSongIndex = parseInt(localStorage.getItem('playingSongIndex'), 10);
+            setSong(songList[playingSongIndex]);
+        } else {
+            setSong({ nombre: 'Nombre de la canción', artista: 'Artista', imagen: 'https://images.unsplash.com/photo-1569519576545-fa1e60738b37?q=80&w=1597&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' });
+        }
+
         if (rute != null && audioRef.current) {
-            audioRef.current.play();
-            setIsPlaying(true);
+            if (isPlaying) {
+                audioRef.current.play().catch((error) => {
+                    console.error('Error al reproducir el audio:', error);
+                });
+            } else {
+                audioRef.current.pause();
+            }
         }
     }, [rute]);
 
@@ -113,7 +155,9 @@ const Player = ({ rute, onSongEnd }) => {
             if (isPlaying) {
                 audioRef.current.pause();
             } else {
-                audioRef.current.play();
+                audioRef.current.play().catch((error) => {
+                    console.error('Error al reproducir el audio:', error);
+                });
             }
             setIsPlaying(!isPlaying);
         }
@@ -122,10 +166,10 @@ const Player = ({ rute, onSongEnd }) => {
     return (
         <>
             <div className="flex items-center space-x-4 pb-3">
-                <img src={songImage} alt="Song" className="w-14 h-14 object-cover rounded-lg" />
+                <img src={song.imagen} alt="Song" className="w-14 h-14 object-cover rounded-lg" />
                 <div className="flex flex-col">
-                    <span className="text-lg font-semibold">{songTitle}</span>
-                    <span className="text-sm text-gray-500">{songArtist}</span>
+                    <span className="text-lg font-semibold">{song.nombre}</span>
+                    <span className="text-sm text-gray-500">{song.artista}</span>
                 </div>
             </div>
             <div className="flex flex-col items-center space-y-2 mb-5">
@@ -185,7 +229,7 @@ const Player = ({ rute, onSongEnd }) => {
                     />
                 </div>
             </div>
-            <audio ref={audioRef} src={audioSrc}></audio>
+            <audio ref={audioRef} src={rute}></audio>
         </>
     );
 };
