@@ -1,5 +1,6 @@
 
 import pymysql
+import pymysql.cursors
 from pymysql.err import MySQLError
 from dotenv import load_dotenv
 from flask import Blueprint, current_app
@@ -43,7 +44,7 @@ def query(quer: str, data=None):
 def query_con_retorno(quer: str, data=None):
     try:
         with get_connection() as connection:
-            with connection.cursor() as cursor:
+            with connection.cursor(pymysql.cursors.DictCursor) as cursor:
                 consultas = quer.split("--")
                 retorno = []
                 for i in consultas:

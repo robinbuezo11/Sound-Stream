@@ -4,6 +4,7 @@ from db import query, query_con_retorno
 from pymysql.err import MySQLError
 from io import BytesIO
 import logging
+import base64
 
 BlueprintLogin =  Blueprint('login', __name__)
 logger = logging.getLogger(__name__)
@@ -18,13 +19,17 @@ def login():
         if not correo or not password:
             return jsonify({"error": "Correo o contraseña vacíos"}), 400
         # Consulta del usuario por correo
-        usuario = query_con_retorno("SELECT * FROM usuario WHERE correo = %s", (correo,))
+        usuario = query_con_retorno("SELECT * FROM USUARIO WHERE correo = %s", (correo,))
+        # Depuración: imprime el resultado de la consulta
+        print("Resultado de la consulta:", usuario)
         if not usuario:
             return jsonify({"error": "Correo o contraseña incorrectos"}), 401
         # Verificación de la contraseña
         usuario = usuario[0]
-        if not check_password(password, usuario['password']):
+        if not check_password(password, usuario['PASSWORD']):
             return jsonify({"error": "Correo o contraseña incorrectos"}), 401
+        # Opcionalmente, eliminar la contraseña del resultado antes de devolver el usuario
+        usuario.pop('PASSWORD', None)
         return jsonify({"message": "Login exitoso", "usuario": usuario}), 200
     except MySQLError as e:
         print(f"Error en la consulta de login: {e}")
@@ -36,24 +41,33 @@ def login():
 @BlueprintLogin.route('/registrar', methods=['POST'])
 def registrar():
     try:
-        nombres = request.form['nombre']
-        apellidos = request.form['apellido']
-        foto = request.files['foto']
-        email = request.form['correo']
-        password = request.form['password']
-        fecha_nacimiento = request.form['fecha_nacimiento']
-        # Validaciones
-        extension = foto.filename.split('.')[-1]
-        if foto.filename != '':
-            data = foto.read()
+        # Obtener datos del formulario y archivo
+        data = request.json
+        if 'foto' not in data or not data['foto']:
+            return jsonify({"error": "Falta la imagen del perfil"}), 400
+        nombres = data.get('nombre')
+        apellidos = data.get('apellido')
+        foto = data.get('foto')
+        email = data.get('correo')
+        password = data.get('password')
+        fecha_nacimiento = data.get('fecha_nacimiento')
+        # Validar que el correo no esté registrado
         correo = query_con_retorno("SELECT * FROM usuario WHERE correo = %s", (email,))
         if correo:
             return jsonify({"error": "El correo ya está registrado"}), 400
+        # Cifrar la contraseña
         cifrar_password = hash_password(password)
-        nombre_imagen = guardarObjeto(BytesIO(data), extension, "Fotos/")
-        id_foto = nombre_imagen['Key']
-        path_foto = nombre_imagen['Location']
-        query("INSERT INTO usuario (nombres, apellidos, foto, correo, password, fecha_nacimiento) VALUES (%s, %s, %s, %s, %s, %s)",
+        # Procesar la imagen
+        if foto:
+            # Decodificar la imagen
+            foto_bytes = base64.b64decode(foto.split(',')[1])  # Decodifica la imagen
+            extension = 'jpg'  # Puedes mejorar esto determinando la extensión correcta a partir del base64 si es necesario
+            nombre_imagen = guardarObjeto(BytesIO(foto_bytes), extension, "Fotos/")
+            path_foto = nombre_imagen['Location']
+        else:
+            path_foto = None
+        # Insertar el usuario
+        query("INSERT INTO usuario (NOMBRE, APELLIDO, FOTO, CORREO, PASSWORD, FECHA_NACIMIENTO) VALUES (%s, %s, %s, %s, %s, %s)",
               (nombres, apellidos, path_foto, email, cifrar_password, fecha_nacimiento))
         return jsonify({"message": "Usuario registrado"}), 201
     except MySQLError as e:

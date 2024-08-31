@@ -12,13 +12,13 @@ s3 = boto3.client(
 )
 
 def guardarObjeto(contenido, extension, tipoObjeto):
-    #Generar un nombre unico para el archivo
+    # Generar un nombre único para el archivo
     key = f"{tipoObjeto}{uuid.uuid4()}.{extension}"
-    print(s3Config['name'])
 
-    #Subir el archivo
-    s3.upload_fileobj(contenido, s3Config['name'], key, ExtraArgs={'ACL': 'public-read'})
     try:
+        # Subir el archivo sin especificar ACL
+        s3.upload_fileobj(contenido, s3Config['name'], key)
+
         return {
             'Key': key,
             'Location': f"https://{s3Config['name']}.s3.amazonaws.com/{key}"
@@ -29,7 +29,7 @@ def guardarObjeto(contenido, extension, tipoObjeto):
             'Key': key,
             'Location': f"https://{s3Config['name']}.s3.amazonaws.com/{key}"
         }
-
+    
 def eliminarObjeto(key):
     try:
         s3.delete_object(Bucket=s3Config['name'], Key=key)
