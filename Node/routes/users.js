@@ -13,12 +13,23 @@ const s3 = new aws.S3({
 router.get('/', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM USUARIO');
-        res.json(rows);
+        // Eliminar la contraseña de los usuarios y minimizar los atributos
+        const usuarios = rows.map(usuario => {
+            return {
+                id: usuario.ID,
+                nombre: usuario.NOMBRE,
+                apellido: usuario.APELLIDO,
+                foto: usuario.FOTO,
+                correo: usuario.CORREO,
+                fecha_nacimiento: usuario.FECHA_NACIMIENTO
+            };
+        });
+        res.json(usuarios);
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: error.message, message: 'Error en el servidor' });
     }
-    console.log('GET /users');
+    console.log('GET /usuarios');
 });
 
 router.post('/registrar', async (req, res) => {
@@ -53,7 +64,7 @@ router.post('/registrar', async (req, res) => {
         console.log(error);
         res.status(500).json({ error: 'Error en el servidor', message: error.message });
     }
-    console.log('POST /users/registrar');
+    console.log('POST /usuarios/registrar');
 });
 
 router.post('/login', async (req, res) => {
@@ -73,7 +84,7 @@ router.post('/login', async (req, res) => {
         console.log(error);
         res.status(500).json({ error: 'Error en el servidor', message: error.message });
     }
-    console.log('POST /users/login');
+    console.log('POST /usuarios/login');
 });
 
 router.put('/actualizar', async (req, res) => {
@@ -122,7 +133,7 @@ router.put('/actualizar', async (req, res) => {
         console.log(error);
         res.status(500).json({ error: 'Error en el servidor', message: error.message });
     }
-    console.log('PUT /users/actualizar');
+    console.log('PUT /usuarios/actualizar');
 });
 
 module.exports = router;
