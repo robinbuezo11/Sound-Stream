@@ -1,18 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { FaHeart } from 'react-icons/fa';
 import Song from './Song';
+import Swal from 'sweetalert2';
 
 const Favorites = ({ darkMode, onSongSelect, playingSongIndex }) => {
+    const [songs, setSongs] = useState([]);
     const [likedSongs, setLikedSongs] = useState(JSON.parse(localStorage.getItem('likedSongs')) || []);
     const [playingSong, setPlayingSong] = useState(() => {
         const savedIndex = localStorage.getItem('playingSongIndex');
         return savedIndex !== null ? parseInt(savedIndex, 10) : null;
     });
 
-    const songs = [
-        { image: 'https://images.unsplash.com/photo-1724368202143-3781f7b30d23?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', name: 'Song 1', artist: 'Artist 1', duration: '3:45', file: 'c2.mp3' },
-        { image: 'https://images.unsplash.com/photo-1724368202143-3781f7b30d23?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', name: 'Song 2', artist: 'Artist 2', duration: '4:20', file: 'c3.mp3' },
-    ];
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        fetch(process.env.REACT_APP_API_URL + '/canciones/favoritas?idUsuario=' + user.id)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error
+                });
+                return;
+            }
+            setSongs(data);
+            setLikedSongs(data.map((song, index) => index));
+        })
+    }, []);
 
     useEffect(() => {
         localStorage.setItem('likedSongs', JSON.stringify(likedSongs));
@@ -35,7 +51,7 @@ const Favorites = ({ darkMode, onSongSelect, playingSongIndex }) => {
 
     const handleSongClick = (index, file) => {
         if (onSongSelect) {
-            onSongSelect(file, index, songs.map(song => song.file));
+            onSongSelect(file, index, songs);
         }
         setPlayingSong(index);
         localStorage.setItem('playingSongIndex', index);
@@ -49,7 +65,7 @@ const Favorites = ({ darkMode, onSongSelect, playingSongIndex }) => {
                 </div>
                 <div>
                     <h2 className="text-3xl font-bold mb-2">Favoritos</h2>
-                    <p className="text-sm text-gray-500">{songs.length} Songs</p>
+                    <p className="text-sm text-gray-500">{songs.length} Canciones</p>
                 </div>
             </div>
             <table className={`min-w-full ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-white text-gray-700'}`}>
@@ -57,7 +73,7 @@ const Favorites = ({ darkMode, onSongSelect, playingSongIndex }) => {
                     <tr className={`w-full ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-white text-gray-700'}`}>
                         <th className="p-2 text-left text-sm w-10">No.</th>
                         <th className="p-2 text-left text-sm">Título</th>
-                        <th className="p-2 text-left text-sm w-20">Duration</th>
+                        <th className="p-2 text-left text-sm w-20">Duración</th>
                         <th className="p-2 text-left text-sm w-16"></th>
                         <th className="p-2 text-left text-sm w-16"></th>
                     </tr>
