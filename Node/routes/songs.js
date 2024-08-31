@@ -142,4 +142,34 @@ router.put('/actualizar', async (req, res) => {
     console.log('PUT /canciones/actualizar');
 });
 
+router.delete('/eliminar', async (req, res) => {
+    try {
+        const { id } = req.body;
+        // Validar los datos
+        if (!id) {
+            return res.status(400).json({ error: 'Datos incompletos', message: 'Datos incompletos' });
+        }
+        // Verificar que la cancion exista
+        const [rows] = await pool.query('SELECT * FROM CANCION WHERE id = ?', [id]);
+        if (rows.length === 0) {
+            return res.status(400).json({ error: 'La cancion no existe', message: 'La cancion no existe' });
+        }
+
+        // Eliminar la cancion y la imagen de AWS S3
+        const keyCancion = decodeURIComponent(rows[0].CANCION).split('.com/')[1];
+        await s3.deleteObject({ Bucket: process.env.AWS_BUCKET_NAME, Key: keyCancion }).promise();
+
+        const keyImagen = decodeURIComponent(rows[0].IMAGEN).split('.com/')[1];
+        await s3.deleteObject({ Bucket: process.env.AWS_BUCKET_NAME, Key: keyImagen }).promise();
+
+        // Eliminar la cancion de la base de datos
+        await pool.query('DELETE FROM CANCION WHERE id = ?', [id]);
+        res.json({ id });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Error en el servidor', message: error.message });
+    }
+    console.log('DELETE /canciones/eliminar');
+});
+
 module.exports = router;

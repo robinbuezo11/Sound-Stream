@@ -132,8 +132,46 @@ const Crud = ({ darkMode }) => {
     };
 
     const handleDeleteSong = (id) => {
-        const updatedList = songsList.filter(song => song.id !== id);
-        setSongsList(updatedList);
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(process.env.REACT_APP_API_URL + '/canciones/eliminar', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error('Error:', data.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.error
+                        });
+                        return;
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Canción eliminada',
+                            text: 'La canción se ha eliminado correctamente'
+                        });
+                        const updatedList = songsList.filter(song => song.id !== id);
+                        setSongsList(updatedList);
+                    }
+                });
+            }
+        });
     };
 
     const handleViewDetails = (song) => {
