@@ -15,6 +15,7 @@ const ProfilePanel = ({onClose, onSave}) => {
     const [newUserDoB, setNewUserDoB] = useState('');
     const [password, setPassword] = useState('');
     const [profilePicture, setProfilePicture] = useState(require('../../Assets/img/usuario.png'));
+    const [newProfilePicture, setNewProfilePicture] = useState('');
 
     useEffect(() => {
         let storedUser = localStorage.getItem('user');
@@ -31,7 +32,7 @@ const ProfilePanel = ({onClose, onSave}) => {
     }, []);
 
     const handleSave = () => {
-        onSave(userId, newUserName, newUserLastName, profilePicture, newUserPassword, newUserDoB, password);
+        onSave(userId, newUserName, newUserLastName, newProfilePicture, newUserPassword, newUserDoB, password);
         setIsEditing(false);
     };
 
@@ -39,14 +40,19 @@ const ProfilePanel = ({onClose, onSave}) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = (e) => setProfilePicture(e.target.result);
+            reader.onload = (e) => {
+                setProfilePicture(e.target.result);
+                setNewProfilePicture(e.target.result);
+            }
             reader.readAsDataURL(file);
         }
     };
 
     const formatDate = (date) => {
+        const localDate = new Date(date);
+        localDate.setMinutes(localDate.getMinutes() + localDate.getTimezoneOffset());
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(date).toLocaleDateString('es-ES', options);
+        return localDate.toLocaleDateString('es-ES', options);
     };
 
     return (

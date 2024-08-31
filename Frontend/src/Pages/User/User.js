@@ -96,6 +96,10 @@ const User = ({ userName }) => {
                     icon: 'success',
                     title: 'Perfil actualizado',
                     text: 'Tu perfil ha sido actualizado correctamente'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.reload();
+                    }
                 });
                 localStorage.setItem('user', JSON.stringify(data));
             }

@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
         res.json(rows);
     } catch (error) {
         console.log(error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error.message, message: 'Error en el servidor' });
     }
     console.log('GET /users');
 });
@@ -26,12 +26,12 @@ router.post('/registrar', async (req, res) => {
         const { nombre, apellido, foto, correo, password, fecha_nacimiento } = req.body;
         // Validar los datos
         if (!nombre || !apellido || !foto || !correo || !password || !fecha_nacimiento) {
-            return res.status(400).json({ error: 'Datos incompletos' });
+            return res.status(400).json({ error: 'Datos incompletos', message: 'Datos incompletos' });
         }
         // Verificar que el correo no exista
         const [rows] = await pool.query('SELECT id FROM USUARIO WHERE correo = ?', [correo]);
         if (rows.length > 0) {
-            return res.status(400).json({ error: 'El correo ya existe' });
+            return res.status(400).json({ error: 'El correo ya existe', message: 'El correo ya existe' });
         }
         // Subir la foto a AWS S3
         const fotoBuffer = Buffer.from(foto.replace(/^data:image\/\w+;base64,/, ''), 'base64');
@@ -61,12 +61,12 @@ router.post('/login', async (req, res) => {
         const { correo, password } = req.body;
         // Validar los datos
         if (!correo || !password) {
-            return res.status(400).json({ error: 'Datos incompletos' });
+            return res.status(400).json({ error: 'Datos incompletos', message: 'Datos incompletos' });
         }
         // Verificar que el correo exista
         const [rows] = await pool.query('SELECT * FROM USUARIO WHERE correo = ? AND password = ?', [correo, password]);
         if (rows.length === 0) {
-            return res.status(400).json({ error: 'Correo o contraseña incorrectos' });
+            return res.status(400).json({ error: 'Correo o contraseña incorrectos', message: 'Correo o contraseña incorrectos' });
         }
         res.json({ id: rows[0].ID, nombre: rows[0].NOMBRE, apellido: rows[0].APELLIDO, foto: rows[0].FOTO, correo: rows[0].CORREO, fecha_nacimiento: rows[0].FECHA_NACIMIENTO });
     } catch (error) {
@@ -80,36 +80,44 @@ router.put('/actualizar', async (req, res) => {
     try {
         const { id, nombre, apellido, foto, password, fecha_nacimiento, actualPassword } = req.body;
         // Validar los datos
-        if (!id || !nombre || !apellido || !foto || !password || !fecha_nacimiento || !actualPassword) {
-            return res.status(400).json({ error: 'Datos incompletos' });
+        if (!id || !nombre || !apellido || !fecha_nacimiento || !actualPassword) {
+            return res.status(400).json({ error: 'Datos incompletos', message: 'Datos incompletos' });
         }
         // Verificar que el usuario exista y que la contraseña sea correcta
         const [rows] = await pool.query('SELECT * FROM USUARIO WHERE id = ? AND password = ?', [id, actualPassword]);
         if (rows.length === 0) {
-            return res.status(400).json({ error: 'Usuario no encontrado o contraseña incorrecta' });
+            return res.status(400).json({ error: 'Usuario no encontrado o contraseña incorrecta', message: 'Usuario no encontrado o contraseña incorrecta' });
         }
+        const correo = rows[0].CORREO;
+
         // Eliminar la foto anterior de AWS S3
-        const oldFoto = rows[0].FOTO;
-        if (oldFoto !== foto) {
+        const oldFoto = decodeURIComponent(rows[0].FOTO);
+        let nuevaFoto = oldFoto;
+        if (foto) {
             const key = oldFoto.split('.com/')[1];
             await s3.deleteObject({ Bucket: process.env.AWS_BUCKET_NAME, Key: key }).promise();
-        }
-        // Subir la foto a AWS S3
-        const fotoBuffer = Buffer.from(foto.replace(/^data:image\/\w+;base64,/, ''), 'base64');
-        
-        const params = {
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Key: `Fotos/${correo}-${Date.now()}.jpg`,
-            Body: fotoBuffer,
-            ContentType: 'image/jpeg'
-        };
 
-        const data = await s3.upload(params).promise();
-        const fotoUrl = data.Location;
+            // Subir la foto a AWS S3
+            const fotoBuffer = Buffer.from(foto.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+            
+            const params = {
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Key: `Fotos/${correo}-${Date.now()}.jpg`,
+                Body: fotoBuffer,
+                ContentType: 'image/jpeg'
+            };
+
+            const data = await s3.upload(params).promise();
+            nuevaFoto = data.Location;
+        }
+
         // Actualizar el usuario
-        const query = "UPDATE USUARIO SET nombre = ?, apellido = ?, foto = ?, correo = ?, password = ?, fecha_nacimiento = ? WHERE id = ?";
-        await pool.query(query, [nombre, apellido, fotoUrl, correo, password, fecha_nacimiento, id]);
-        res.json({ id, nombre, apellido, foto: fotoUrl, correo, fecha_nacimiento });
+        let pass;
+        !password ? pass = actualPassword : pass = password;
+
+        const query = "UPDATE USUARIO SET nombre = ?, apellido = ?, foto = ?, password = ?, fecha_nacimiento = ? WHERE id = ?";
+        await pool.query(query, [nombre, apellido, nuevaFoto, pass, fecha_nacimiento, id]);
+        res.json({ id, nombre, apellido, foto: nuevaFoto, correo, fecha_nacimiento });
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Error en el servidor', message: error.message });
