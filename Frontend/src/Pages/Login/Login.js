@@ -28,42 +28,41 @@ const Login = ({ onLogin }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const admin = email === 'admin@sound-stream.com' && password === 'admin';
         // const user = email === 'user@sound-stream.com' && password === 'user';
-        if (admin) {
-            onLogin(true, { correo: email, nombre: 'Admin', foto: require('../../Assets/img/usuario.png') });
-            navigate('/Admin');
-        } else {
-            fetch(process.env.REACT_APP_API_URL + '/usuarios/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ correo: email, password })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    console.error(data.message);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.error
-                    });
-                } else {
-                    onLogin(true, data); // Llama a onLogin con el estado de autenticación y el usuario
-                    navigate('/User');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
+        fetch(process.env.REACT_APP_API_URL + '/usuarios/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ correo: email, password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.message);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Ocurrió un error al iniciar sesión'
+                    text: data.error
                 });
+            } else {
+                const admin = data.correo === 'admin@sound-stream.com';
+                onLogin(true, data); // Llama a onLogin con el estado de autenticación y el usuario
+                if (admin) {
+                    navigate('/Admin');
+                } else {
+                    navigate('/User');
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ocurrió un error al iniciar sesión'
             });
-        }
+        });
     };
 
     return (

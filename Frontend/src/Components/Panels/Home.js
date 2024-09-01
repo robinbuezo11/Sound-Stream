@@ -38,23 +38,21 @@ const Home = ({ darkMode, setActivePanel, handleSongSelect }) => {
         })
         .catch(error => console.error(error));
 
-        if (storedUser.correo !== 'admin@sound-stream.com') {
-            fetch(process.env.REACT_APP_API_URL + '/canciones/favoritas?idUsuario=' + storedUser.id)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    console.error(data.message);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.error
-                    });
-                    return;
-                }
-                setFavsSongs(data);
-            })
-            .catch(error => console.error(error));
-        }
+        fetch(process.env.REACT_APP_API_URL + '/canciones/favoritas?idUsuario=' + storedUser.id)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error
+                });
+                return;
+            }
+            setFavsSongs(data);
+        })
+        .catch(error => console.error(error));
 
         const updateGreeting = () => {
             const date = new Date();
@@ -138,17 +136,15 @@ const Home = ({ darkMode, setActivePanel, handleSongSelect }) => {
                             <p className="text-sm">{song.artista}</p>
                         </div>
                         <div className="ml-auto">
-                            {user.correo !== 'admin@sound-stream.com' && (
-                                <button 
-                                    className="p-2 rounded-full hover:bg-gray-400"
-                                    onClick={(event) => {
-                                        event.stopPropagation();
-                                        handleSongFav(song.id);
-                                    }}
-                                >
-                                    {favsSongs.find(fav => fav.id === song.id) ? <IoMdHeart className="text-xl text-red-500" /> : <IoMdHeartEmpty className="text-xl" />}
-                                </button>
-                            )}
+                            <button 
+                                className="p-2 rounded-full hover:bg-gray-400"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    handleSongFav(song.id);
+                                }}
+                            >
+                                {favsSongs.find(fav => fav.id === song.id) ? <IoMdHeart className="text-xl text-red-500" /> : <IoMdHeartEmpty className="text-xl" />}
+                            </button>
                         </div>
                     </div>
                 ))}

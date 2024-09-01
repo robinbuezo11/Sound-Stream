@@ -81,7 +81,9 @@ const TopBar = ({ darkMode, userName, setActivePanel }) => {
 
                 {dropdownVisible && (
                     <div className={`absolute top-full right-0 mt-2 rounded-lg shadow-lg w-48 ${darkMode ? 'bg-inputBackground text-white border-gray-100' : 'bg-white text-gray-800 border-gray-300'}`}>
-                        <p className={`px-4 py-2 cursor-pointer ${darkMode ? 'hover:bg-secondaryBackground' : 'hover:bg-gray-100'}`} onClick={EditProfile}>Editar Perfil</p>
+                        {userName !== 'Admin' && (
+                            <p className={`px-4 py-2 cursor-pointer ${darkMode ? 'hover:bg-secondaryBackground' : 'hover:bg-gray-100'}`} onClick={EditProfile}>Editar Perfil</p>
+                        )}
                         <p className={`px-4 py-2 cursor-pointer ${darkMode ? 'hover:bg-secondaryBackground' : 'hover:bg-gray-100'}`} onClick={handleLogout}>Cerrar Sesión</p>
                     </div>
                 )}
