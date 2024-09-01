@@ -19,7 +19,7 @@ def login():
         if not correo or not password:
             return jsonify({"error": "Correo o contraseña vacíos"}), 400
         # Valida que exista el usuario
-        usuario = query_con_retorno("SELECT * FROM USUARIO WHERE correo = %s", (correo,))
+        usuario = query_con_retorno("SELECT * FROM USUARIO WHERE CORREO = %s", (correo,))
         if not usuario:
             return jsonify({"error": "Correo o contraseña incorrectos"}), 401
         # Verificación de la contraseña
@@ -57,7 +57,7 @@ def registrar():
         password = data.get('password')
         fecha_nacimiento = data.get('fecha_nacimiento')
         # Validar que el correo no esté registrado
-        correo = query_con_retorno("SELECT * FROM usuario WHERE correo = %s", (email,))
+        correo = query_con_retorno("SELECT * FROM USUARIO WHERE CORREO = %s", (email,))
         if correo:
             return jsonify({"error": "El correo ya está registrado"}), 400
         cifrar_password = hash_password(password)
@@ -69,7 +69,7 @@ def registrar():
         else:
             path_foto = None
         # Insertar el usuario
-        query("INSERT INTO usuario (NOMBRE, APELLIDO, FOTO, CORREO, PASSWORD, FECHA_NACIMIENTO) VALUES (%s, %s, %s, %s, %s, %s)",
+        query("INSERT INTO USUARIO (NOMBRE, APELLIDO, FOTO, CORREO, PASSWORD, FECHA_NACIMIENTO) VALUES (%s, %s, %s, %s, %s, %s)",
               (nombres, apellidos, path_foto, email, cifrar_password, fecha_nacimiento))
         return jsonify({"message": "Usuario registrado"}), 201
     except MySQLError as e:
@@ -93,7 +93,7 @@ def actualizar_usuario():
         # Verificar que el usuario exista
         if id is None or not nombres or not apellidos or not actual_password:
             return jsonify({"error": "Datos incompletos"}), 400
-        usuario = query_con_retorno("SELECT * FROM usuario WHERE id = %s", (id,))
+        usuario = query_con_retorno("SELECT * FROM USUARIO WHERE ID = %s", (id,))
         if not usuario:
             return jsonify({"error": "Usuario no encontrado"}), 404
         usuario = usuario[0]
@@ -112,9 +112,9 @@ def actualizar_usuario():
             nueva_password_cifrada = hash_password(nueva_password)
         else:
             nueva_password_cifrada = usuario['PASSWORD']
-        query("UPDATE usuario SET NOMBRE = %s, APELLIDO = %s, FOTO = %s, PASSWORD = %s, FECHA_NACIMIENTO = %s WHERE id = %s",
+        query("UPDATE USUARIO SET NOMBRE = %s, APELLIDO = %s, FOTO = %s, PASSWORD = %s, FECHA_NACIMIENTO = %s WHERE id = %s",
               (nombres, apellidos, nueva_foto_url, nueva_password_cifrada, fecha_nacimiento, id))
-        usuario_actualizado = query_con_retorno("SELECT * FROM usuario WHERE id = %s", (id,))
+        usuario_actualizado = query_con_retorno("SELECT * FROM USUARIO WHERE ID = %s", (id,))
 
         if not usuario_actualizado:
             return jsonify({"error": "No se pudo obtener la información actualizada"}), 500
