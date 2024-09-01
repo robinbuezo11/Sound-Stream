@@ -3,7 +3,7 @@
 | Curso                     | Sección   |
 |---------------------------|-----------|
 |Seminario de Sistemas I	|A          |           
-### Integrantes 🌠
+
 ### Integrantes 🌠
 | # | Nombre                                 | Carnet    |
 |---|----------------------------------------|-----------|
