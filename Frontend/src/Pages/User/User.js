@@ -61,9 +61,9 @@ const User = ({ userName }) => {
     const handleSongEnd = () => {
         const nextIndex = (playingSongIndex + 1) % songList.length;
         setPlayingSongIndex(nextIndex);
-        setCurrentSong(songList[nextIndex]);
+        setCurrentSong(songList[nextIndex].cancion);
         localStorage.setItem('playingSongIndex', nextIndex);
-        localStorage.setItem('currentSong', songList[nextIndex]);
+        localStorage.setItem('currentSong', songList[nextIndex].cancion);
     };
 
     const handleProfileSave = (userId, newUserName, newUserLastName, profilePicture, newUserPassword, newUserDoB, password) => {

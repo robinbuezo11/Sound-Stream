@@ -24,8 +24,8 @@ const Player = ({ rute, onSongEnd }) => {
             const handleLoadedMetadata = () => {
                 if (isFinite(audio.duration)) {
                     const formatTime = (time) => {
-                        const minutes = Math.floor(time / 60);
-                        const seconds = Math.floor(time % 60);
+                        const minutes = Math.floor(isNaN(time) ? 0 : time / 60);
+                        const seconds = Math.floor(isNaN(time) ? 0 : time % 60);
                         return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
                     };
                     setDuration(`-${formatTime(audio.duration)}`);
@@ -68,8 +68,8 @@ const Player = ({ rute, onSongEnd }) => {
                 setProgress(progress);
 
                 const formatTime = (time) => {
-                    const minutes = Math.floor(time / 60);
-                    const seconds = Math.floor(time % 60);
+                    const minutes = Math.floor(isNaN(time) ? 0 : time / 60);
+                    const seconds = Math.floor(isNaN(time) ? 0 : time % 60);
                     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
                 };
 
@@ -101,7 +101,7 @@ const Player = ({ rute, onSongEnd }) => {
             const playingSongIndex = parseInt(localStorage.getItem('playingSongIndex'), 10);
             setSong(songList[playingSongIndex]);
         } else {
-            setSong({ nombre: 'Nombre de la canción', artista: 'Artista', imagen: 'https://images.unsplash.com/photo-1569519576545-fa1e60738b37?q=80&w=1597&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' });
+            setSong({ nombre: 'Seleccione una canción', artista: 'Artista', imagen: 'https://cdn.pixabay.com/photo/2020/01/31/19/26/vinyl-4808792_1280.jpg' });
         }
 
         if (rute != null && audioRef.current) {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaHeart } from 'react-icons/fa';
 import { HiOutlineDotsVertical } from "react-icons/hi";
 
-const Song = ({ index, song, likedSongs, toggleLike, darkMode }) => {
+const Song = ({ index, song, songs, likedSongs, toggleLike, darkMode, handleSongClick }) => {
     const [isHovered, setIsHovered] = useState(false);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -50,6 +50,8 @@ const Song = ({ index, song, likedSongs, toggleLike, darkMode }) => {
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 className={`${darkMode ? 'bg-darkBackground text-colorText hover:bg-hover' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+                style={{ cursor: 'pointer' }}
+                onClick={() => handleSongClick(song.cancion, index, songs)}
             >
                 <td className="p-2 text-sm w-10">{index + 1}</td>
                 <td className="p-2 text-sm flex items-center space-x-3">
@@ -63,7 +65,7 @@ const Song = ({ index, song, likedSongs, toggleLike, darkMode }) => {
                 <td className="p-2 text-sm w-16 text-center">
                     <button onClick={() => toggleLike(index)}>
                         <FaHeart
-                            className={`w-6 h-6 ${likedSongs.includes(index) ? 'text-like' : 'text-gray-400'} transition-colors duration-200`}
+                            className={`w-6 h-6 cursor-pointer ${likedSongs.includes(index) ? 'text-red-500' : 'text-gray-400'}`}
                         />
                     </button>
                 </td>

@@ -49,13 +49,13 @@ const Favorites = ({ darkMode, onSongSelect, playingSongIndex }) => {
         );
     };
 
-    const handleSongClick = (index, file) => {
-        if (onSongSelect) {
-            onSongSelect(file, index, songs);
-        }
-        setPlayingSong(index);
-        localStorage.setItem('playingSongIndex', index);
-    };
+    // const handleSongClick = (index, file) => {
+    //     if (onSongSelect) {
+    //         onSongSelect(file, index, songs);
+    //     }
+    //     setPlayingSong(index);
+    //     localStorage.setItem('playingSongIndex', index);
+    // };
 
     return (
         <div className={`p-6 ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-white text-gray-700'}`}>
@@ -84,9 +84,11 @@ const Favorites = ({ darkMode, onSongSelect, playingSongIndex }) => {
                             key={index}
                             index={index}
                             song={song}
+                            songs={songs}
                             likedSongs={likedSongs}
                             toggleLike={toggleLike}
                             darkMode={darkMode}
+                            handleSongClick={onSongSelect}
                         />
                     ))}
                 </tbody>
