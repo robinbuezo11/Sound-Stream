@@ -4,12 +4,13 @@
 |---------------------------|-----------|
 |Seminario de Sistemas I	|A          |           
 ### Integrantes 🌠
+### Integrantes 🌠
 | # | Nombre                                 | Carnet    |
 |---|----------------------------------------|-----------|
-| 1 | Rivaldo Alexander Tojín Ixcotoyac      | 201900956 |
-| 2 | Kevin Estuardo Palacios Quiñonez       | 201902278 |
-| 3 | Robin Omar Buezo Díaz                  | 201944994 |
-| 4 | Brandon Andy Jefferson Tejaxún Pichiyá | 202112030 |
+| 1 | [Rivaldo Alexander Tojín Ixcotoyac](https://github.com/rivalTj7)      | 201900956 |
+| 2 | [Kevin Estuardo Palacios Quiñonez](https://github.com/KevinPalaciosQ)       | 201902278 |
+| 3 | [Robin Omar Buezo Díaz](https://github.com/robinbuezo11)                  | 201944994 |
+| 4 | [Brandon Andy Jefferson Tejaxún Pichiyá](https://github.com/brandonT2002) | 202112030 |
 
 
 # Manuales 📖
