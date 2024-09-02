@@ -2,24 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { IoMdAdd, IoMdHeartEmpty, IoMdHeart } from 'react-icons/io';
 import Swal from 'sweetalert2';
 
-// Array de playlists con imágenes de portada
-const playlists = [
-    { name: 'Chill Vibes', songCount: 12, image: 'https://images.unsplash.com/photo-1724368202143-3781f7b30d23?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', panel: 'PlayList' },
-    { name: 'Top Hits', songCount: 24, image: 'https://images.unsplash.com/photo-1724368202143-3781f7b30d23?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', panel: 'PlayList' },
-];
-
 const Home = ({ darkMode, setActivePanel, handleSongSelect }) => {
     const [greeting, setGreeting] = useState('');
     const [songs, setSongs] = useState([]);
     const [favsSongs, setFavsSongs] = useState([]);
+    const [playlists, setPlaylists] = useState([]);
     const [songsMessage, setSongsMessage] = useState('');
-    const [userName, setUserName] = useState('');
     const [user, setUser] = useState({});
 
     useEffect(() => {
         const storedUserName = localStorage.getItem('userName') || 'Usuario';
         const storedUser = JSON.parse(localStorage.getItem('user')) || {};
-        setUserName(storedUserName);
         setUser(storedUser);
 
         fetch(process.env.REACT_APP_API_URL + '/canciones')
@@ -51,6 +44,22 @@ const Home = ({ darkMode, setActivePanel, handleSongSelect }) => {
                 return;
             }
             setFavsSongs(data);
+        })
+        .catch(error => console.error(error));
+
+        fetch(process.env.REACT_APP_API_URL + '/playlists?idUsuario=' + storedUser.id)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error
+                });
+                return;
+            }
+            setPlaylists(data);
         })
         .catch(error => console.error(error));
 
@@ -170,12 +179,12 @@ const Home = ({ darkMode, setActivePanel, handleSongSelect }) => {
                     <div 
                         key={index} 
                         className={`flex items-center p-2 rounded-lg shadow-md cursor-pointer ${darkMode ? 'bg-secondaryBackground text-colorText hover:bg-hover' : 'bg-gray-200 text-gray-700 hover:bg-gray-100'}`}
-                        onClick={() => setActivePanel('PlayList', playlist.name)}
+                        onClick={() => setActivePanel('PlayList', playlist.nombre, playlist)}
                     >
-                        <img src={playlist.image} alt={playlist.name} className="w-24 h-24 object-cover rounded-lg mr-4" />
+                        <img src={playlist.portada} alt={playlist.nombre} className="w-24 h-24 object-cover rounded-lg mr-4" />
                         <div className="flex flex-col">
-                            <h3 className="text-lg font-semibold mb-1">{playlist.name}</h3>
-                            <p className={`text-sm text-gray-500 `}>{playlist.songCount} Canciones</p>
+                            <h3 className="text-lg font-semibold mb-1">{playlist.nombre}</h3>
+                            <p className={`text-sm text-gray-500 `}>{0} Canciones</p>
                         </div>
                     </div>
                 ))}

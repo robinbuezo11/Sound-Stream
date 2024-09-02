@@ -20,6 +20,7 @@ const User = ({ userName }) => {
     });
     const [previousPanel, setPreviousPanel] = useState('');
     const [selectedPlaylist, setSelectedPlaylist] = useState('');
+    const [playList, setPlayList] = useState({});
     const [currentSong, setCurrentSong] = useState(localStorage.getItem('currentSong') || null);
     const [songList, setSongList] = useState(JSON.parse(localStorage.getItem('songList')) || []);
     const [playingSongIndex, setPlayingSongIndex] = useState(() => {
@@ -39,7 +40,7 @@ const User = ({ userName }) => {
         };
     }, []);
 
-    const handlePanelChange = (panel, playlistName = '') => {
+    const handlePanelChange = (panel, playlistName = '', playlist = {}) => {
         if (panel === 'ProfilePanel') {
             setPreviousPanel(activePanel);
         }
@@ -47,6 +48,7 @@ const User = ({ userName }) => {
         localStorage.setItem('activePanel', panel); // Guardar el panel activo en localStorage
         if (panel === 'PlayList') {
             setSelectedPlaylist(playlistName);
+            setPlayList(playlist);
         }
     };
 
@@ -134,9 +136,9 @@ const User = ({ userName }) => {
                 <div className={`flex-1 overflow-y-auto custom-scrollbar ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-background text-gray-700'}`} style={{height: 'calc(100vh - 10.5rem)', marginTop: '5rem'}}>
                     {activePanel === 'Home' && <Home darkMode={darkMode} setActivePanel={handlePanelChange} handleSongSelect={handleSongSelect} />}
                     {activePanel === 'Favorites' && <Favorites darkMode={darkMode} onSongSelect={handleSongSelect} playingSongIndex={playingSongIndex} />}
-                    {activePanel === 'NewPlayList' && <NewPlayList darkMode={darkMode} />}
+                    {activePanel === 'NewPlayList' && <NewPlayList darkMode={darkMode} setActivePanel={handlePanelChange} />}
                     {activePanel === 'Radio' && <Radio darkMode={darkMode} />}
-                    {activePanel === 'PlayList' && <PlayList darkMode={darkMode} playListName={selectedPlaylist} />}
+                    {activePanel === 'PlayList' && <PlayList key={playList.id} darkMode={darkMode} playListName={selectedPlaylist} playList={playList} />}
                     {activePanel === 'ProfilePanel' && <ProfilePanel onSave={handleProfileSave} onClose={handleProfileClose} />}
                 </div>
             </div>

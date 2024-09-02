@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import Song from './Song';
 
-const PlayList = ({ darkMode, playListName }) => {
+const PlayList = ({ darkMode, playListName, playList }) => {
+    const [selectedPlayList, setSelectedPlayList] = useState(playList);
     const [likedSongs, setLikedSongs] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newPlayListName, setNewPlayListName] = useState(playListName);
-    const [coverImage, setCoverImage] = useState('https://images.unsplash.com/photo-1471478331149-c72f17e33c73?q=80&w=1469&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-
-    const songs = [
-        { image: 'https://images.unsplash.com/photo-1724368202143-3781f7b30d23?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', name: 'Song 1', artist: 'Artist 1', duration: '3:45' },
-        { image: 'https://images.unsplash.com/photo-1724368202143-3781f7b30d23?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', name: 'Song 2', artist: 'Artist 2', duration: '4:20' },
-    ];
+    const [coverImage, setCoverImage] = useState(playList.portada);
 
     const toggleLike = (index) => {
         setLikedSongs((prev) =>
@@ -27,7 +23,7 @@ const PlayList = ({ darkMode, playListName }) => {
     };
 
     const handleCancel = () => {
-        setNewPlayListName(playListName);
+        setNewPlayListName(selectedPlayList.nombre);
         setIsModalOpen(false);
     };
 
@@ -63,7 +59,7 @@ const PlayList = ({ darkMode, playListName }) => {
                 />
                 <div>
                     <h2 onClick={handleTitleClick} className="text-3xl font-bold mb-2 cursor-pointer">{newPlayListName}</h2>
-                    <p className="text-sm text-gray-500">{songs.length} Songs</p>
+                    <p className="text-sm text-gray-500">{selectedPlayList.canciones ? selectedPlayList.canciones.length : 0} canciones</p>
                 </div>
             </div>
             <table className={`min-w-full ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-white text-gray-700'}`}>
@@ -71,29 +67,30 @@ const PlayList = ({ darkMode, playListName }) => {
                     <tr className={`w-full ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-white text-gray-700'}`}>
                         <th className="p-2 text-left text-sm w-10">No.</th>
                         <th className="p-2 text-left text-sm">Título</th>
-                        <th className="p-2 text-left text-sm w-20">Duration</th>
+                        <th className="p-2 text-left text-sm w-20">Duración</th>
                         <th className="p-2 text-left text-sm w-16"></th>
                         <th className="p-2 text-left text-sm w-16"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {songs.map((song, index) => (
+                    {selectedPlayList.canciones ? selectedPlayList.canciones.map((song, index) => (
                         <Song
                             key={index}
                             index={index}
                             song={song}
+                            songs={selectedPlayList.canciones}
                             likedSongs={likedSongs}
                             toggleLike={toggleLike}
                             darkMode={darkMode}
                         />
-                    ))}
+                    )) : null}
                 </tbody>
             </table>
 
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className={`bg-${darkMode ? 'mainBackground' : 'white'} p-6 rounded-lg shadow-lg`}>
-                        <h3 className="text-xl mb-4">Edit Playlist Name</h3>
+                        <h3 className="text-xl mb-4">Editar el nombre de la Playlist</h3>
                         <input
                             type="text"
                             value={newPlayListName}

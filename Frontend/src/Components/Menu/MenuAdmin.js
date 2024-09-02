@@ -4,11 +4,8 @@ import { IoIosRadio } from 'react-icons/io';
 import { SlEarphones } from 'react-icons/sl';
 import { isDarkMode } from '../../Utils/DarkMode';
 import { FaMusic } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
-const playlists = [
-    { name: 'Chill Vibes', songCount: 12, image: 'https://images.unsplash.com/photo-1724368202143-3781f7b30d23?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', panel: 'PlayList' },
-    { name: 'Top Hits', songCount: 24, image: 'https://images.unsplash.com/photo-1724368202143-3781f7b30d23?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', panel: 'PlayList' },
-];
 const options = [
     { name: 'Inicio', icon: <FaHome className="text-xl text-white" />, bgColor: 'bg-green-500', panel: 'Home' },
     { name: 'Favoritos', icon: <FaHeart className="text-xl text-white" />, bgColor: 'bg-gradient-to-br from-[#645FFB] to-[#63E2FF]', panel: 'Favorites' },
@@ -18,8 +15,26 @@ const options = [
 
 const MenuAdmin = ({ setActivePanel }) => {
     const [darkMode, setDarkMode] = useState(isDarkMode());
+    const [playlists, setPlaylists] = useState([]);
 
     useEffect(() => {
+        const storedUser = JSON.parse(localStorage.getItem('user')) || {};
+        fetch(process.env.REACT_APP_API_URL + '/playlists?idUsuario=' + storedUser.id)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error
+                });
+                return;
+            }
+            setPlaylists(data);
+        })
+        .catch(error => console.error(error));
+
         const darkModeListener = window.matchMedia('(prefers-color-scheme: dark)');
         darkModeListener.addEventListener('change', (e) => {
             setDarkMode(e.matches);
@@ -61,15 +76,15 @@ const MenuAdmin = ({ setActivePanel }) => {
                     <div 
                         key={index} 
                         className={`p-2 rounded-lg flex items-center space-x-2 cursor-pointer ${darkMode ? 'bg-secondaryBackground text-colorText hover:bg-hover' : 'bg-gray-200 text-gray-700 hover:bg-gray-100'} ${index === playlists.length - 1 ? 'mb-4' : ''}`}
-                        onClick={() => setActivePanel('PlayList', playlist.name)} // Cambia el panel activo y establece el nombre de la playlist
+                        onClick={() => setActivePanel('PlayList', playlist.nombre, playlist)} // Cambia el panel activo y establece el nombre de la playlist
                     >
                         <img
-                            src={playlist.image}
+                            src={playlist.portada}
                             alt="Playlist"
                             className="w-11 h-11 object-cover rounded" />
                         <div>
-                            <h4 className="text-base font-semibold">{playlist.name}</h4>
-                            <p className={`text-sm text-gray-500 `}>{playlist.songCount} Canciones</p>
+                            <h4 className="text-base font-semibold">{playlist.nombre}</h4>
+                            <p className={`text-sm text-gray-500 `}>{playlist.canciones.length} Canciones</p>
                         </div>
                     </div>
                 ))}

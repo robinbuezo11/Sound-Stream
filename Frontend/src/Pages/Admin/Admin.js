@@ -19,7 +19,8 @@ const Admin = ({ userName }) => {
         return localStorage.getItem('activePanel') || 'Home';
     });
     const [previousPanel, setPreviousPanel] = useState('');
-    const [selectedPlaylist, setSelectedPlaylist] = useState('');
+    const [selectedPlaylist, setSelectedPlaylist] = useState(localStorage.getItem('selectedPlaylist') || '');
+    const [playList, setPlayList] = useState(JSON.parse(localStorage.getItem('playList')) || {});
     const [currentSong, setCurrentSong] = useState(localStorage.getItem('currentSong') || null);
     const [songList, setSongList] = useState(JSON.parse(localStorage.getItem('songList')) || []);
     const [playingSongIndex, setPlayingSongIndex] = useState(() => {
@@ -39,7 +40,7 @@ const Admin = ({ userName }) => {
         };
     }, []);
 
-    const handlePanelChange = (panel, playlistName = '') => {
+    const handlePanelChange = (panel, playlistName = '', playlist = {}) => {
         if (panel === 'ProfilePanel') {
             setPreviousPanel(activePanel);
         }
@@ -47,6 +48,9 @@ const Admin = ({ userName }) => {
         localStorage.setItem('activePanel', panel);
         if (panel === 'PlayList') {
             setSelectedPlaylist(playlistName);
+            setPlayList(playlist);
+            localStorage.setItem('selectedPlaylist', playlistName);
+            localStorage.setItem('playList', JSON.stringify(playlist));
         }
     };
 
@@ -83,9 +87,9 @@ const Admin = ({ userName }) => {
                 <div className={`flex-1 overflow-y-auto custom-scrollbar ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-background text-gray-700'}`} style={{height: 'calc(100vh - 10.5rem)', marginTop: '5rem'}}>
                     {activePanel === 'Home' && <Home darkMode={darkMode} setActivePanel={handlePanelChange} handleSongSelect={handleSongSelect} />}
                     {activePanel === 'Favorites' && <Favorites darkMode={darkMode} onSongSelect={handleSongSelect} playingSongIndex={playingSongIndex} />}
-                    {activePanel === 'NewPlayList' && <NewPlayList darkMode={darkMode} />}
+                    {activePanel === 'NewPlayList' && <NewPlayList darkMode={darkMode} setActivePanel={handlePanelChange} />}
                     {activePanel === 'Radio' && <Radio darkMode={darkMode} />}
-                    {activePanel === 'PlayList' && <PlayList darkMode={darkMode} playListName={selectedPlaylist} />}
+                    {activePanel === 'PlayList' && <PlayList key={playList.id} darkMode={darkMode} playListName={selectedPlaylist} playList={playList} />}
                     {activePanel === 'Crud' && <Crud darkMode={darkMode} />}
                     {/* {activePanel === 'ProfilePanel' && <ProfilePanel darkMode={darkMode} />} */}
                     {activePanel === 'ProfilePanel' && <ProfilePanel onClose={onCloseProfilePanel} onSave={onCloseProfilePanel} />}

@@ -12,8 +12,14 @@ const s3 = new aws.S3({
 
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await pool.query('SELECT * FROM PLAYLIST');
-        const playlists = await rows.map( async playlist => {
+        const idUsuario = req.query.idUsuario;
+
+        let query = 'SELECT * FROM PLAYLIST';
+        if (idUsuario) {
+            query = 'SELECT * FROM PLAYLIST WHERE ID_USUARIO = ?';
+        }
+        const [rows] = await pool.query(query, [idUsuario]);
+        const playlists = await rows.map(async playlist => {
             const [rows2] = await pool.query('SELECT * FROM CANCION WHERE ID IN (SELECT ID_CANCION FROM PLAYLIST_CANCION WHERE ID_PLAYLIST = ?)', [playlist.ID]);
             const canciones = rows2.map(cancion => {
                 return {
@@ -35,13 +41,19 @@ router.get('/', async (req, res) => {
                 canciones: canciones
             };
         });
+
+        const result = await Promise.all(playlists);
         
-        res.json(playlists);
+        res.json(result);
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: error.message, message: 'Error en el servidor' });
     }
-    console.log('GET /playlists');
+    if (req.query.idUsuario) {
+        console.log('GET /playlists?idUsuario=' + req.query.idUsuario);
+    } else {
+        console.log('GET /playlists');
+    }
 });
 
 router.post('/registrar', async (req, res) => {
