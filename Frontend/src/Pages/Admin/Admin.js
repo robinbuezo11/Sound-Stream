@@ -164,7 +164,7 @@ const Admin = ({ userName }) => {
                     {!searchActive && activePanel === 'Home' && <Home darkMode={darkMode} setActivePanel={handlePanelChange} handleSongSelect={handleSongSelect} />}
                     {!searchActive && activePanel === 'Favorites' && <Favorites darkMode={darkMode} onSongSelect={handleSongSelect} playingSongIndex={playingSongIndex} />}
                     {!searchActive && activePanel === 'NewPlayList' && <NewPlayList darkMode={darkMode} setActivePanel={handlePanelChange} />}
-                    {!searchActive && activePanel === 'Radio' && <Radio darkMode={darkMode} />}
+                    {!searchActive && activePanel === 'Radio' && <Radio darkMode={darkMode} onSongSelect={handleSongSelect} playingSongIndex={playingSongIndex} />}
                     {!searchActive && activePanel === 'PlayList' && <PlayList key={playList.id} darkMode={darkMode} playListName={selectedPlaylist} playList={playList} setActivePanel={handlePanelChange} onSongSelect={handleSongSelect} />}
                     {!searchActive && activePanel === 'Crud' && <Crud darkMode={darkMode} />}
                     {!searchActive && activePanel === 'ProfilePanel' && <ProfilePanel onClose={onCloseProfilePanel} onSave={onCloseProfilePanel} />}

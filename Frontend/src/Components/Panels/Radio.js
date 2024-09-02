@@ -15,7 +15,7 @@ const Radio = ({ darkMode, onSongSelect, playingSongIndex }) => {
 
     useEffect(() => {
         setUser(JSON.parse(localStorage.getItem('user')));
-        fetch(process.env.REACT_APP_API_URL + '/canciones/favoritas?idUsuario=' + user.id)
+        fetch(process.env.REACT_APP_API_URL + '/canciones')
         .then(response => response.json())
         .then(data => {
             if (data.error) {
@@ -28,27 +28,25 @@ const Radio = ({ darkMode, onSongSelect, playingSongIndex }) => {
                 return;
             }
             setSongs(data);
+        })
+        .catch(error => console.error(error));
+
+        fetch(process.env.REACT_APP_API_URL + '/canciones/favoritas?idUsuario=' + user.id)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error
+                });
+                return;
+            }
             setLikedSongs(data.map((song) => song.id));
         })
+        .catch(error => console.error(error));
     }, []);
-
-    useEffect(() => {
-        localStorage.setItem('likedSongs', JSON.stringify(likedSongs));
-        fetch(process.env.REACT_APP_API_URL + '/canciones/favoritas?idUsuario=' + user.id)
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                console.error(data.message);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.error
-                });
-                return;
-            }
-            setSongs(data);
-        })
-    }, [likedSongs]);
 
     useEffect(() => {
         const savedIndex = localStorage.getItem('playingSongIndex');
@@ -86,8 +84,10 @@ const Radio = ({ darkMode, onSongSelect, playingSongIndex }) => {
     }
 
     const handlePlayClick = () => {
-        console.log("reproduciendo");
-        // Aquí puedes agregar más lógica si es necesario
+        const cancionAleatoria = Math.floor(Math.random() * songs.length);
+        console.log(songs.length, cancionAleatoria)
+        const cancion = songs[cancionAleatoria]
+        onSongSelect(cancion.cancion, cancionAleatoria, songs)
     }
 
     return (
