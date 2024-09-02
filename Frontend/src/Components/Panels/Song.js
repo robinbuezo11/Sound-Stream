@@ -63,14 +63,14 @@ const Song = ({ index, song, songs, likedSongs, toggleLike, darkMode, handleSong
                 </td>
                 <td className="p-2 text-sm w-20 text-left">{`${Math.floor(song.duracion / 60)}:${Math.floor(song.duracion % 60).toString().padStart(2, '0')}`}</td>
                 <td className="p-2 text-sm w-16 text-center">
-                    <button onClick={() => toggleLike(index)}>
+                    <button onClick={(event) => { event.stopPropagation(); toggleLike(song.id); }}>
                         <FaHeart
-                            className={`w-6 h-6 cursor-pointer ${likedSongs.includes(index) ? 'text-red-500' : 'text-gray-400'}`}
+                            className={`w-6 h-6 cursor-pointer ${likedSongs.includes(song.id) ? 'text-red-500' : 'text-gray-400'}`}
                         />
                     </button>
                 </td>
                 <td className="p-2 text-sm w-16 text-center relative" ref={dropdownRef}>
-                    <button onClick={toggleDropdown}>
+                    <button onClick={(event) => { event.stopPropagation(); toggleDropdown(); }}>
                         <HiOutlineDotsVertical className="w-6 h-6 text-gray-400 cursor-pointer" />
                     </button>
                     {dropdownVisible && (
