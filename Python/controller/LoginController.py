@@ -147,16 +147,21 @@ def actualizar_usuario():
 @BlueprintLogin.route('/', methods=['GET'])
 def obtener_usuarios():
     try:
-        usuario = query_con_retorno("SELECT * FROM USUARIO")
-        usuario_data = {
-            "id": usuario['ID'],
-            "nombre": usuario['NOMBRE'],
-            "apellido": usuario['APELLIDO'],
-            "foto": usuario['FOTO'],
-            "correo": usuario['CORREO'],
-            "fecha_nacimiento": usuario['FECHA_NACIMIENTO']
-        }
-        return jsonify(usuario_data), 200
+        usuarios = query_con_retorno("SELECT * FROM USUARIO")
+        if not usuarios:
+            return jsonify({"message": "No users found"}), 404
+        usuarios_data = []
+        for usuario in usuarios:
+            usuario_data = {
+                "id": usuario['ID'],
+                "nombre": usuario['NOMBRE'],
+                "apellido": usuario['APELLIDO'],
+                "foto": usuario['FOTO'],
+                "correo": usuario['CORREO'],
+                "fecha_nacimiento": usuario['FECHA_NACIMIENTO']
+            }
+            usuarios_data.append(usuario_data)
+        return jsonify(usuarios_data), 200
     except MySQLError as e:
         current_app.logger.error(f"Error fetching users: {e}")
         return jsonify({"error": "Failed to fetch users"}), 500

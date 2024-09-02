@@ -16,5 +16,5 @@ app.register_blueprint(BlueprintLogin, url_prefix='/usuarios')
 app.register_blueprint(BlueprintCancion, url_prefix='/canciones')
 app.register_blueprint(BlueprintPlaylists, url_prefix='/playlists')
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
