@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app
-from util.configPage import hash_password, guardarObjeto, check_password, eliminarObjeto
+from util.configPage import guardarObjeto, check_password, eliminarObjeto
 from db import query, query_con_retorno
 from pymysql.err import MySQLError
 from io import BytesIO
@@ -12,8 +12,11 @@ logger = logging.getLogger(__name__)
 @BlueprintPlaylists.route('/', methods=['GET'])
 def getPlaylists():
     try:
+        usuario_id = request.args.get('idUsuario')
         playlists = query_con_retorno('SELECT * FROM PLAYLIST')
         playlists_with_canciones = []
+        if(usuario_id):
+            playlists = query_con_retorno('SELECT * FROM PLAYLIST WHERE ID_USUARIO = %s', (usuario_id,))
 
         for playlist in playlists:
             canciones = query_con_retorno('SELECT * FROM CANCION WHERE ID IN (SELECT ID_CANCION FROM PLAYLIST_CANCION WHERE ID_PLAYLIST = %s)', (playlist['ID'],))

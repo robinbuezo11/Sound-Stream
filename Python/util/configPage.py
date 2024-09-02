@@ -38,11 +38,6 @@ def eliminarObjeto(key):
         print(e)
         return False
 
-def hash_password(password):
-    salt = bcrypt.gensalt()
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-    return hashed_password
-
 def check_password(password, passwordCifrado):
     #se compara la contraseña que se recibe del front con la que esta en la base de datos
     if( password == passwordCifrado):
