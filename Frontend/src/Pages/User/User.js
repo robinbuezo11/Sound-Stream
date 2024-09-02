@@ -23,8 +23,8 @@ const User = ({ userName }) => {
         return localStorage.getItem('activePanel') || 'Home';
     });
     const [previousPanel, setPreviousPanel] = useState('');
-    const [selectedPlaylist, setSelectedPlaylist] = useState('');
-    const [playList, setPlayList] = useState({});
+    const [selectedPlaylist, setSelectedPlaylist] = useState(localStorage.getItem('selectedPlaylist') || '');
+    const [playList, setPlayList] = useState(JSON.parse(localStorage.getItem('playList')) || {});
     const [currentSong, setCurrentSong] = useState(localStorage.getItem('currentSong') || null);
     const [songList, setSongList] = useState(JSON.parse(localStorage.getItem('songList')) || []);
     const [playingSongIndex, setPlayingSongIndex] = useState(() => {
