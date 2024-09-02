@@ -3,7 +3,7 @@ import Song from './Song';
 import Swal from 'sweetalert2';
 
 const PlayList = ({ darkMode, playListName, playList, setActivePanel, onSongSelect }) => {
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+    const user = JSON.parse(localStorage.getItem('user'));
 
     const [selectedPlayList, setSelectedPlayList] = useState(playList);
     const [likedSongs, setLikedSongs] = useState(JSON.parse(localStorage.getItem('likedSongs')) || []);

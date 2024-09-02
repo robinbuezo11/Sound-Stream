@@ -49,6 +49,8 @@ const User = ({ userName }) => {
         if (panel === 'PlayList') {
             setSelectedPlaylist(playlistName);
             setPlayList(playlist);
+            localStorage.setItem('selectedPlaylist', playlistName);
+            localStorage.setItem('playList', JSON.stringify(playlist));
         }
     };
 

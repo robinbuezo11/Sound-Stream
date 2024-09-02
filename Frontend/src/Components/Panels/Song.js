@@ -4,7 +4,6 @@ import Swal from 'sweetalert2';
 
 const Song = ({ index, song, songs, likedSongs, toggleLike, darkMode, handleSongClick, playList }) => {
     const [playlists, setPlaylists] = useState([]);
-    const [isHovered, setIsHovered] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -97,8 +96,6 @@ const Song = ({ index, song, songs, likedSongs, toggleLike, darkMode, handleSong
     return (
         <>
             <tr
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
                 className={`${darkMode ? 'bg-darkBackground text-colorText hover:bg-hover' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
                 style={{ cursor: 'pointer' }}
                 onClick={() => handleSongClick(song.cancion, index, songs)}

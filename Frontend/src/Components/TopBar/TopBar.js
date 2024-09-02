@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
-import { IoIosArrowBack, IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowDown } from "react-icons/io";
 
 const TopBar = ({ darkMode, userName, setActivePanel }) => {
     const [dropdownVisible, setDropdownVisible] = useState(false);

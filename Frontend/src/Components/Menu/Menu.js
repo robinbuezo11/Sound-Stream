@@ -74,15 +74,15 @@ const Menu = ({ setActivePanel }) => {
                     <div 
                         key={index} 
                         className={`p-2 rounded-lg flex items-center space-x-2 cursor-pointer ${darkMode ? 'bg-secondaryBackground text-colorText hover:bg-hover' : 'bg-gray-200 text-gray-700 hover:bg-gray-100'} ${index === playlists.length - 1 ? 'mb-4' : ''}`}
-                        onClick={() => setActivePanel('PlayList', playlist.name, playlist)} // Cambia el panel activo y establece el nombre de la playlist
+                        onClick={() => setActivePanel('PlayList', playlist.nombre, playlist)} // Cambia el panel activo y establece el nombre de la playlist
                     >
                         <img
-                            src={playlist.image}
+                            src={playlist.portada}
                             alt="Playlist"
                             className="w-11 h-11 object-cover rounded" />
                         <div>
-                            <h4 className="text-base font-semibold">{playlist.name}</h4>
-                            <p className={`text-sm text-gray-500 `}>{playlist.songCount} Canciones</p>
+                            <h4 className="text-base font-semibold">{playlist.nombre}</h4>
+                            <p className={`text-sm text-gray-500 `}>{playlist.canciones.length} Canciones</p>
                         </div>
                     </div>
                 ))}

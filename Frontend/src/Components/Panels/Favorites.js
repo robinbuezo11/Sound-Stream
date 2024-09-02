@@ -7,10 +7,6 @@ const Favorites = ({ darkMode, onSongSelect, playingSongIndex }) => {
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
     const [songs, setSongs] = useState([]);
     const [likedSongs, setLikedSongs] = useState(JSON.parse(localStorage.getItem('likedSongs')) || []);
-    const [playingSong, setPlayingSong] = useState(() => {
-        const savedIndex = localStorage.getItem('playingSongIndex');
-        return savedIndex !== null ? parseInt(savedIndex, 10) : null;
-    });
 
     useEffect(() => {
         setUser(JSON.parse(localStorage.getItem('user')));
@@ -48,15 +44,6 @@ const Favorites = ({ darkMode, onSongSelect, playingSongIndex }) => {
             setSongs(data);
         })
     }, [likedSongs]);
-
-    useEffect(() => {
-        const savedIndex = localStorage.getItem('playingSongIndex');
-        if (savedIndex === null) {
-            setPlayingSong(null);
-        } else {
-            setPlayingSong(parseInt(savedIndex, 10));
-        }
-    }, [playingSongIndex]);
 
     const toggleLike = (id) => {
         fetch(process.env.REACT_APP_API_URL + '/canciones/favorita?idCancion=' + id + '&idUsuario=' + user.id, {
