@@ -183,54 +183,55 @@ const NewPlayList = ({ darkMode }) => {
         <div className={`w-full ${darkMode ? 'text-white bg-mainBackground' : 'text-gray-700 bg-white'}`} style={{ height: 'calc(100vh - 11.5rem)' }}>
             <h1 className="text-4xl font-semibold text-center mt-4 ml-4">Creación de Playlist</h1>
             
-            <form onSubmit={handleAddPlayList} className="mt-8 mx-4">
-                <div>
-                    <div className="mb-4">
-                        <label className={`block text-lg font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Nombre</label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className={`w-full p-2 border rounded ${darkMode ? 'bg-gray-800 text-white border-gray-600' : 'bg-white text-gray-800 border-gray-300'}`}
-                            required
-                        />
+            {!isUpdating && (
+                <form onSubmit={handleAddPlayList} className="mt-8 mx-4">
+                    <div>
+                        <div className="mb-4">
+                            <label className={`block text-lg font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Nombre</label>
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className={`w-full p-2 border rounded ${darkMode ? 'bg-gray-800 text-white border-gray-600' : 'bg-white text-gray-800 border-gray-300'}`}
+                                required
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label className={`block text-lg font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Descripcion</label>
+                            <input
+                                type="text"
+                                value={descripcion}
+                                onChange={(e) => setDesc(e.target.value)}
+                                className={`w-full p-2 border rounded ${darkMode ? 'bg-gray-800 text-white border-gray-600' : 'bg-white text-gray-800 border-gray-300'}`}
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label className={`block text-lg font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Portada</label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handlePhotoChange}
+                                className={`w-full p-2 border rounded ${darkMode ? 'bg-gray-800 text-white border-gray-600' : 'bg-white text-gray-800 border-gray-300'}`}
+                                required
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            className={`w-full py-2 px-4 rounded ${darkMode ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-blue-700 text-white hover:bg-blue-800'}`}
+                        >
+                            Guardar Playlist
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleCancelAddPlayList}
+                            className={`w-full py-2 px-4 mt-2 rounded ${darkMode ? 'bg-gray-500 text-white hover:bg-gray-600' : 'bg-gray-700 text-white hover:bg-gray-800'}`}
+                        >
+                            Cancelar
+                        </button>
                     </div>
-                    <div className="mb-4">
-                        <label className={`block text-lg font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Descripcion</label>
-                        <input
-                            type="text"
-                            value={descripcion}
-                            onChange={(e) => setDesc(e.target.value)}
-                            className={`w-full p-2 border rounded ${darkMode ? 'bg-gray-800 text-white border-gray-600' : 'bg-white text-gray-800 border-gray-300'}`}
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label className={`block text-lg font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Portada</label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handlePhotoChange}
-                            className={`w-full p-2 border rounded ${darkMode ? 'bg-gray-800 text-white border-gray-600' : 'bg-white text-gray-800 border-gray-300'}`}
-                            required
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className={`w-full py-2 px-4 rounded ${darkMode ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-blue-700 text-white hover:bg-blue-800'}`}
-                    >
-                        Guardar Playlist
-                    </button>
-                    <button
-                        type="button"
-                        onClick={handleCancelAddPlayList}
-                        className={`w-full py-2 px-4 mt-2 rounded ${darkMode ? 'bg-gray-500 text-white hover:bg-gray-600' : 'bg-gray-700 text-white hover:bg-gray-800'}`}
-                    >
-                        Cancelar
-                    </button>
-                </div>
-            </form>
+                </form>
+            )}
 
-            {/* Formulario para actualizar canción */}
             {isUpdating && (
                 <div className={`mt-8 mx-4 p-4 ${darkMode ? 'bg-gray-800' : 'bg-gray-100'} border rounded`}>
                     <h2 className="text-2xl font-semibold mb-4">Actualizar Canción</h2>
