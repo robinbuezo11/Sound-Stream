@@ -257,4 +257,33 @@ router.put('/favorita', async (req, res) => {
     console.log('PUT /canciones/favorita?idCancion=' + req.query.idCancion + '&idUsuario=' + req.query.idUsuario);
 });
 
+router.get('/buscar', async (req, res) => {
+    try {
+        const parametro = req.query.parametro;
+        // Validar los datos
+        if (parametro) {
+            // Obtener las canciones favoritas del usuario
+            const [rows2] = await pool.query(`SELECT * FROM CANCION WHERE NOMBRE LIKE '%${parametro}%' OR ARTISTA LIKE '%${parametro}%' `);
+
+            const canciones = rows2.map(cancion => {
+                return {
+                    id: cancion.ID,
+                    nombre: cancion.NOMBRE,
+                    cancion: cancion.CANCION,
+                    imagen: cancion.IMAGEN,
+                    duracion: cancion.DURACION,
+                    artista: cancion.ARTISTA
+                };
+            });
+            res.json(canciones);
+        } else {
+            res.json([]);
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Error en el servidor', message: error.message });
+    }
+    console.log('GET /canciones/buscar?cancion=' + req.query.cancion);
+});
+
 module.exports = router;

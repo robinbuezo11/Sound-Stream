@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import { IoIosArrowDown } from "react-icons/io";
 
-const TopBar = ({ darkMode, userName, setActivePanel }) => {
+const TopBar = ({ darkMode, userName, setActivePanel, setSearchActive, onSearchChange }) => {
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [user, setUser] = useState({foto: require('../../Assets/img/usuario.png')});
     const navigate = useNavigate();
@@ -27,6 +27,12 @@ const TopBar = ({ darkMode, userName, setActivePanel }) => {
     const EditProfile = () => {
         console.log('Redirigiendo a la edición de Perfil...');
         setActivePanel('ProfilePanel');
+    };
+
+    const handleSearchChange = (event) => {
+        const query = event.target.value.trim();
+        onSearchChange(query);
+        setSearchActive(query.length > 0);
     };
 
     useEffect(() => {
@@ -54,12 +60,13 @@ const TopBar = ({ darkMode, userName, setActivePanel }) => {
             style={{ height: '5rem', width: 'calc(100% - 20rem)' }}
         >
             <div className="flex items-center">
-                <div className="relative mx-8 flex-1 max-w-xs">
+                <div className="relative mx-1 flex-1 max-w-xs">
                     <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                     <input 
                         type="text" 
                         placeholder="¿Qué quieres reproducir?" 
                         className={`h-11 w-96 pl-10 py-2 border rounded-lg outline-none ${darkMode ? 'bg-inputBackground text-white border-gray-700' : 'bg-white border-gray-300'}`}
+                        onChange={handleSearchChange}
                     />
                 </div>
             </div>
