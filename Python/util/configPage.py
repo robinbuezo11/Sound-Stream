@@ -45,9 +45,7 @@ def hash_password(password):
 
 def check_password(password, passwordCifrado):
     #se compara la contraseña que se recibe del front con la que esta en la base de datos
-    password = password.encode('utf-8')
-    passwordCifrado = passwordCifrado.encode('utf-8')
-    if bcrypt.checkpw(password, passwordCifrado):
+    if( password == passwordCifrado):
         return True
     else:
         return False

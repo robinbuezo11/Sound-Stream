@@ -26,9 +26,6 @@ def login():
         usuario = usuario[0]
         hashed_password = usuario['PASSWORD']
 
-        # Depuración adicional
-        print(f"Correo: {correo}, Hash almacenado: {hashed_password}, Contraseña ingresada: {password}")
-
         if correo == 'admin@sound-stream.com':
             if not password == 'admin':
                 return jsonify({"error": "Correo o contraseña incorrectos"}), 401
@@ -57,7 +54,6 @@ def login():
 @BlueprintLogin.route('/registrar', methods=['POST'])
 def registrar():
     try:
-        # Obtener datos del formulario y archivo
         data = request.json
         if 'foto' not in data or not data['foto']:
             return jsonify({"error": "Falta la imagen del perfil"}), 400
@@ -67,11 +63,11 @@ def registrar():
         email = data.get('correo')
         password = data.get('password')
         fecha_nacimiento = data.get('fecha_nacimiento')
-        # Validar que el correo no esté registrado
+
         correo = query_con_retorno("SELECT * FROM USUARIO WHERE CORREO = %s", (email,))
         if correo:
             return jsonify({"error": "El correo ya está registrado"}), 400
-        cifrar_password = hash_password(password)
+        cifrar_password = password
         if foto:
             foto_bytes = base64.b64decode(foto.split(',')[1])
             extension = 'jpg'
@@ -79,7 +75,7 @@ def registrar():
             path_foto = nombre_imagen['Location']
         else:
             path_foto = None
-        # Insertar el usuario
+
         query("INSERT INTO USUARIO (NOMBRE, APELLIDO, FOTO, CORREO, PASSWORD, FECHA_NACIMIENTO) VALUES (%s, %s, %s, %s, %s, %s)",
               (nombres, apellidos, path_foto, email, cifrar_password, fecha_nacimiento))
         return jsonify({"message": "Usuario registrado"}), 201
@@ -120,7 +116,7 @@ def actualizar_usuario():
         else:
             nueva_foto_url = usuario['FOTO']
         if nueva_password:
-            nueva_password_cifrada = hash_password(nueva_password)
+            nueva_password_cifrada = nueva_password
         else:
             nueva_password_cifrada = usuario['PASSWORD']
         query("UPDATE USUARIO SET NOMBRE = %s, APELLIDO = %s, FOTO = %s, PASSWORD = %s, FECHA_NACIMIENTO = %s WHERE id = %s",
@@ -205,11 +201,9 @@ def modificarPerfil(id):
         password_actual = data.get('password_actual')
         nueva_password = data.get('nueva_password')
 
-        # Validar que la contraseña actual sea correcta
         usuario = query_con_retorno("SELECT password FROM USUARIO WHERE id = %s", (id,))
         if not usuario or not check_password(password_actual, usuario[0][0]):
             return jsonify({"error": "Contraseña actual incorrecta"}), 400
-        # Procesar la nueva imagen si se sube una
         if foto:
             extension = foto.filename.split('.')[-1]
             data_foto = foto.read()
@@ -217,9 +211,8 @@ def modificarPerfil(id):
             path_foto = nombre_imagen['Location']
         else:
             path_foto = None
-        # Si hay una nueva contraseña, cifrarla
         if nueva_password:
-            cifrado_password = hash_password(nueva_password)
+            cifrado_password = nueva_password
             query("UPDATE USUARIO SET NOMBRE = %s, APELLIDO = %s, CORREO = %s, FECHA_NACIMIENTO = %s, PASSWORD = %s, PATH_FOTO = COALESCE(%s, PATH_FOTO) WHERE ID = %s",
                   (nombres, apellidos, correo, fecha_nacimiento, cifrado_password, path_foto, id))
         else:

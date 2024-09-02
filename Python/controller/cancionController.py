@@ -147,33 +147,27 @@ def eliminarCancion():
         if not id_cancion:
             return jsonify({"error": "Datos incompletos", "message": "Datos incompletos"}), 400
         
-        # Verificar si la canción existe
         canciones = query_con_retorno("SELECT * FROM CANCION WHERE ID = %s", (id_cancion,))
         if not canciones:
             return jsonify({"error": "La canción no existe", "message": "La canción no existe"}), 400
         
         cancion = canciones[0]
         
-        # Eliminar la canción de las tablas relacionadas
         query("DELETE FROM FAVORITO WHERE ID_CANCION = %s", (id_cancion,))
         query("DELETE FROM PLAYLIST_CANCION WHERE ID_CANCION = %s", (id_cancion,))
-        
-        # Eliminar la imagen y la canción del almacenamiento
+
         key_cancion = cancion['CANCION'].split('.com/')[1]
         eliminarObjeto(key_cancion)
         
         key_imagen = cancion['IMAGEN'].split('.com/')[1]
         eliminarObjeto(key_imagen)
         
-        # Eliminar la canción de la tabla CANCION
         query("DELETE FROM CANCION WHERE ID = %s", (id_cancion,))
         
         return jsonify({"id": id_cancion}), 200
-    
     except MySQLError as e:
         logger.error(f"Error al eliminar la canción: {e}")
         return jsonify({"error": "Error al eliminar la canción"}), 500
-    
     except Exception as e:
         logger.error(f"Unexpected error: {e}")
         return jsonify({"error": "Ocurrió un error inesperado"}), 500
