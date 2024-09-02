@@ -143,24 +143,37 @@ def eliminarCancion():
     try:
         data = request.json
         id_cancion = data.get('id')
+        
         if not id_cancion:
             return jsonify({"error": "Datos incompletos", "message": "Datos incompletos"}), 400
+        
+        # Verificar si la canción existe
         canciones = query_con_retorno("SELECT * FROM CANCION WHERE ID = %s", (id_cancion,))
         if not canciones:
             return jsonify({"error": "La canción no existe", "message": "La canción no existe"}), 400
+        
         cancion = canciones[0]
         
+        # Eliminar la canción de las tablas relacionadas
+        query("DELETE FROM FAVORITO WHERE ID_CANCION = %s", (id_cancion,))
+        query("DELETE FROM PLAYLIST_CANCION WHERE ID_CANCION = %s", (id_cancion,))
+        
+        # Eliminar la imagen y la canción del almacenamiento
         key_cancion = cancion['CANCION'].split('.com/')[1]
         eliminarObjeto(key_cancion)
-
+        
         key_imagen = cancion['IMAGEN'].split('.com/')[1]
         eliminarObjeto(key_imagen)
-
+        
+        # Eliminar la canción de la tabla CANCION
         query("DELETE FROM CANCION WHERE ID = %s", (id_cancion,))
+        
         return jsonify({"id": id_cancion}), 200
+    
     except MySQLError as e:
         logger.error(f"Error al eliminar la canción: {e}")
         return jsonify({"error": "Error al eliminar la canción"}), 500
+    
     except Exception as e:
         logger.error(f"Unexpected error: {e}")
         return jsonify({"error": "Ocurrió un error inesperado"}), 500
@@ -232,6 +245,36 @@ def marcarCancionFavorita():
     except MySQLError as e:
         logger.error(f"Error al marcar la canción como favorita: {e}")
         return jsonify({"error": "Error al marcar la canción como favorita"}), 500
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
+        return jsonify({"error": "Ocurrió un error inesperado"}), 500
+    
+
+@BlueprintCancion.route('/buscar', methods=['GET'])
+def buscarCancion():
+    try:
+        parametro = request.args.get('parametro')
+        if not parametro:
+            return jsonify({"error": "Datos incompletos", "message": "Datos incompletos"}), 400
+        sql = "SELECT * FROM CANCION WHERE NOMBRE LIKE %s OR ARTISTA LIKE %s"
+        params = (f"%{parametro}%", f"%{parametro}%")
+        canciones = query_con_retorno(sql, params)
+        canciones_data = []
+        for cancion in canciones:
+            canciones_data.append({
+                "id": cancion['ID'],
+                "nombre": cancion['NOMBRE'],
+                "cancion": cancion['CANCION'],
+                "imagen": cancion['IMAGEN'],
+                "duracion": cancion['DURACION'],
+                "artista": cancion['ARTISTA']
+            })
+
+        return jsonify(canciones_data), 200
+
+    except MySQLError as e:
+        logger.error(f"Error al buscar la canción: {e}")
+        return jsonify({"error": "Error al buscar la canción"}), 500
     except Exception as e:
         logger.error(f"Unexpected error: {e}")
         return jsonify({"error": "Ocurrió un error inesperado"}), 500
