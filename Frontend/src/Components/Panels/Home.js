@@ -153,7 +153,10 @@ const Home = ({ darkMode, setActivePanel, handleSongSelect }) => {
             {/* Lista de playlists */}
             <h2 className="text-2xl font-semibold mt-6">Tus Playlists</h2>
             <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mt-6`}>
-                <div className={`flex items-center p-2 rounded-lg shadow-md cursor-pointer ${darkMode ? 'bg-secondaryBackground text-colorText hover:bg-hover' : 'bg-gray-200 text-gray-700 hover:bg-gray-100'}`}>
+                <div 
+                    className={`flex items-center p-2 rounded-lg shadow-md cursor-pointer ${darkMode ? 'bg-secondaryBackground text-colorText hover:bg-hover' : 'bg-gray-200 text-gray-700 hover:bg-gray-100'}`}
+                    onClick={() => setActivePanel('NewPlayList')}
+                >
                     <div className={`w-24 h-24 flex items-center justify-center rounded-lg mr-4 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}`}>
                         <IoMdAdd className="text-3xl" />
                     </div>

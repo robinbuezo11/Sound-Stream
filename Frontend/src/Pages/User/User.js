@@ -6,6 +6,7 @@ import Home from '../../Components/Panels/Home';
 import Favorites from '../../Components/Panels/Favorites';
 import Radio from "../../Components/Panels/Radio";
 import PlayList from '../../Components/Panels/PlayList';
+import NewPlayList from '../../Components/Panels/NewPlayList';
 import ProfilePanel from '../../Components/Panels/ProfilePanel';
 import '../../Utils/Scroll.css';
 import '../../Utils/Normalize.css';
@@ -133,6 +134,7 @@ const User = ({ userName }) => {
                 <div className={`flex-1 overflow-y-auto custom-scrollbar ${darkMode ? 'bg-mainBackground text-colorText' : 'bg-background text-gray-700'}`} style={{height: 'calc(100vh - 10.5rem)', marginTop: '5rem'}}>
                     {activePanel === 'Home' && <Home darkMode={darkMode} setActivePanel={handlePanelChange} handleSongSelect={handleSongSelect} />}
                     {activePanel === 'Favorites' && <Favorites darkMode={darkMode} onSongSelect={handleSongSelect} playingSongIndex={playingSongIndex} />}
+                    {activePanel === 'NewPlayList' && <NewPlayList darkMode={darkMode} />}
                     {activePanel === 'Radio' && <Radio darkMode={darkMode} />}
                     {activePanel === 'PlayList' && <PlayList darkMode={darkMode} playListName={selectedPlaylist} />}
                     {activePanel === 'ProfilePanel' && <ProfilePanel onSave={handleProfileSave} onClose={handleProfileClose} />}
