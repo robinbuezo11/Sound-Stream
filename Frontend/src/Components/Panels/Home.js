@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { IoMdAdd, IoMdHeartEmpty, IoMdHeart } from 'react-icons/io';
+import { FaPlus, FaWindowClose } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
 const Home = ({ darkMode, setActivePanel, handleSongSelect }) => {
@@ -9,6 +10,8 @@ const Home = ({ darkMode, setActivePanel, handleSongSelect }) => {
     const [playlists, setPlaylists] = useState([]);
     const [songsMessage, setSongsMessage] = useState('');
     const [user, setUser] = useState({});
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedSong, setSelectedSong] = useState({});
 
     useEffect(() => {
         const storedUserName = localStorage.getItem('userName') || 'Usuario';
@@ -114,6 +117,43 @@ const Home = ({ darkMode, setActivePanel, handleSongSelect }) => {
         .catch(error => console.error(error));
     }
 
+    const handleAddSongToPlaylist = (playlistId) => {
+        fetch(process.env.REACT_APP_API_URL + '/playlists/agregarCancion?idPlaylist=' + playlistId + '&idCancion=' + selectedSong.id, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error
+                });
+                return;
+            }
+            Swal.fire({
+                icon: 'success',
+                title: 'Canción agregada',
+                text: 'La canción ha sido agregada a la playlist'
+            })
+            .then(() => {
+                setIsModalVisible(false);
+                window.location.reload();
+            });
+        })
+        .catch(error => console.error(error));
+    };
+
+    const handleAddToPlaylist = () => {
+        setIsModalVisible(true);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedSong({});
+        setIsModalVisible(false);
+    };
+
     return (
         <div className={`w-full p-4 ${darkMode ? 'text-white' : 'text-gray-700'}`} style={{ height: 'calc(100vh - 11.5rem)' }}>
             <div
@@ -128,35 +168,6 @@ const Home = ({ darkMode, setActivePanel, handleSongSelect }) => {
                     <h1 className="text-4xl font-semibold mb-2">{greeting}</h1>
                     <p className="text-2xl">{songsMessage}</p>
                 </div>
-            </div>
-
-            {/* Lista de canciones */}
-            <h2 className="text-2xl font-semibold mt-6">Canciones Recomendadas</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mt-6">
-                {songs.map((song, index) => (
-                    <div 
-                        key={index} 
-                        className={`flex items-center p-2 rounded-lg shadow-md cursor-pointer ${darkMode ? 'bg-secondaryBackground text-colorText hover:bg-hover' : 'bg-gray-200 text-gray-700 hover:bg-gray-100'}`}
-                        onClick={() => handleSongSelect(song.cancion, index, songs)}
-                    >
-                        <img src={song.imagen} alt={song.nombre} className="w-24 h-24 object-cover rounded-lg mr-4" />
-                        <div className="flex flex-col">
-                            <h3 className="text-lg font-semibold mb-1">{`${song.nombre}`}</h3>
-                            <p className="text-sm">{song.artista}</p>
-                        </div>
-                        <div className="ml-auto">
-                            <button 
-                                className="p-2 rounded-full hover:bg-gray-400"
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    handleSongFav(song.id);
-                                }}
-                            >
-                                {favsSongs.find(fav => fav.id === song.id) ? <IoMdHeart className="text-xl text-red-500" /> : <IoMdHeartEmpty className="text-xl" />}
-                            </button>
-                        </div>
-                    </div>
-                ))}
             </div>
 
             {/* Lista de playlists */}
@@ -184,11 +195,71 @@ const Home = ({ darkMode, setActivePanel, handleSongSelect }) => {
                         <img src={playlist.portada} alt={playlist.nombre} className="w-24 h-24 object-cover rounded-lg mr-4" />
                         <div className="flex flex-col">
                             <h3 className="text-lg font-semibold mb-1">{playlist.nombre}</h3>
-                            <p className={`text-sm text-gray-500 `}>{0} Canciones</p>
+                            <p className={`text-sm text-gray-500 `}>{playlist.canciones.length} canciones</p>
                         </div>
                     </div>
                 ))}
             </div>
+
+            {/* Lista de canciones */}
+            <h2 className="text-2xl font-semibold mt-6">Canciones Recomendadas</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mt-6">
+                {songs.map((song, index) => (
+                    <div 
+                        key={index} 
+                        className={`flex items-center p-2 rounded-lg shadow-md cursor-pointer ${darkMode ? 'bg-secondaryBackground text-colorText hover:bg-hover' : 'bg-gray-200 text-gray-700 hover:bg-gray-100'}`}
+                        onClick={() => handleSongSelect(song.cancion, index, songs)}
+                    >
+                        <img src={song.imagen} alt={song.nombre} className="w-24 h-24 object-cover rounded-lg mr-4" />
+                        <div className="flex flex-col">
+                            <h3 className="text-lg font-semibold mb-1">{`${song.nombre}`}</h3>
+                            <p className="text-sm">{song.artista}</p>
+                        </div>
+                        <div className="ml-auto">
+                            <button 
+                                className="p-2 rounded-full hover:bg-gray-400"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    handleSongFav(song.id);
+                                }}
+                            >
+                                {favsSongs.find(fav => fav.id === song.id) ? <IoMdHeart className="text-xl text-red-500" /> : <IoMdHeartEmpty className="text-xl" />}
+                            </button>
+                            <button
+                                className="p-2 rounded-full hover:bg-gray-400"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    setSelectedSong(song);
+                                    handleAddToPlaylist();
+                                }}
+                            >
+                                <FaPlus className="text-xl" />
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+            {isModalVisible && (
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                    <div className="fixed inset-0 bg-black opacity-50" onClick={handleCloseModal}></div>
+                    <div className={`relative rounded-lg shadow-lg w-80 p-4 ${darkMode ? 'bg-secondaryBackground text-colorText' : 'bg-white text-gray-700'}`}>
+                        <h3 className="text-lg font-semibold mb-4">Selecciona una playlist</h3>
+                        <ul>
+                            {playlists.map(playlist => (
+                                <li key={playlist.id} className="py-2">
+                                    <button 
+                                        className="w-full text-left"
+                                        onClick={() => handleAddSongToPlaylist(playlist.id)}
+                                    >
+                                        {playlist.nombre}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                        <button className="absolute top-2 right-2 text-gray-500 dark:text-gray-300" onClick={handleCloseModal}> <FaWindowClose /> </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

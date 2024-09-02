@@ -138,7 +138,7 @@ const User = ({ userName }) => {
                     {activePanel === 'Favorites' && <Favorites darkMode={darkMode} onSongSelect={handleSongSelect} playingSongIndex={playingSongIndex} />}
                     {activePanel === 'NewPlayList' && <NewPlayList darkMode={darkMode} setActivePanel={handlePanelChange} />}
                     {activePanel === 'Radio' && <Radio darkMode={darkMode} />}
-                    {activePanel === 'PlayList' && <PlayList key={playList.id} darkMode={darkMode} playListName={selectedPlaylist} playList={playList} />}
+                    {activePanel === 'PlayList' && <PlayList key={playList.id} darkMode={darkMode} playListName={selectedPlaylist} playList={playList} setActivePanel={handlePanelChange} onSongSelect={handleSongSelect} />}
                     {activePanel === 'ProfilePanel' && <ProfilePanel onSave={handleProfileSave} onClose={handleProfileClose} />}
                 </div>
             </div>

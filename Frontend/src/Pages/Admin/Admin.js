@@ -89,7 +89,7 @@ const Admin = ({ userName }) => {
                     {activePanel === 'Favorites' && <Favorites darkMode={darkMode} onSongSelect={handleSongSelect} playingSongIndex={playingSongIndex} />}
                     {activePanel === 'NewPlayList' && <NewPlayList darkMode={darkMode} setActivePanel={handlePanelChange} />}
                     {activePanel === 'Radio' && <Radio darkMode={darkMode} />}
-                    {activePanel === 'PlayList' && <PlayList key={playList.id} darkMode={darkMode} playListName={selectedPlaylist} playList={playList} />}
+                    {activePanel === 'PlayList' && <PlayList key={playList.id} darkMode={darkMode} playListName={selectedPlaylist} playList={playList} setActivePanel={handlePanelChange} onSongSelect={handleSongSelect} />}
                     {activePanel === 'Crud' && <Crud darkMode={darkMode} />}
                     {/* {activePanel === 'ProfilePanel' && <ProfilePanel darkMode={darkMode} />} */}
                     {activePanel === 'ProfilePanel' && <ProfilePanel onClose={onCloseProfilePanel} onSave={onCloseProfilePanel} />}

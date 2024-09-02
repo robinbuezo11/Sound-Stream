@@ -1,48 +1,98 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaHeart } from 'react-icons/fa';
-import { HiOutlineDotsVertical } from "react-icons/hi";
+import { FaHeart, FaPlus, FaWindowClose, FaTrash } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
-const Song = ({ index, song, songs, likedSongs, toggleLike, darkMode, handleSongClick }) => {
+const Song = ({ index, song, songs, likedSongs, toggleLike, darkMode, handleSongClick, playList }) => {
+    const [playlists, setPlaylists] = useState([]);
     const [isHovered, setIsHovered] = useState(false);
-    const [dropdownVisible, setDropdownVisible] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const dropdownRef = useRef(null);
 
-    const toggleDropdown = () => {
-        setDropdownVisible(!dropdownVisible);
-    };
-
-    const handleClickOutside = (event) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-            setDropdownVisible(false);
-        }
-    };
-
     useEffect(() => {
-        if (dropdownVisible) {
-            document.addEventListener('click', handleClickOutside);
-        } else {
-            document.removeEventListener('click', handleClickOutside);
-        }
-        return () => {
-            document.removeEventListener('click', handleClickOutside);
-        };
-    }, [dropdownVisible]);
+        fetch(process.env.REACT_APP_API_URL + '/playlists?idUsuario=' + JSON.parse(localStorage.getItem('user')).id)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error
+                });
+                return;
+            }
+            setPlaylists(data);
+        })
+        .catch(error => console.error(error));
+    }, []);
+
+    const handleAddSongToPlaylist = (playlistId) => {
+        fetch(process.env.REACT_APP_API_URL + '/playlists/agregarCancion?idPlaylist=' + playlistId + '&idCancion=' + song.id, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error
+                });
+                return;
+            }
+            Swal.fire({
+                icon: 'success',
+                title: 'Canción agregada',
+                text: 'La canción ha sido agregada a la playlist'
+            })
+            .then(() => {
+                setIsModalVisible(false);
+                window.location.reload();
+            });
+        })
+        .catch(error => console.error(error));
+    };
+
+    const handleDelSongFromPlaylist = (playlistId) => {
+        fetch(process.env.REACT_APP_API_URL + '/playlists/eliminarCancion?idPlaylist=' + playlistId + '&idCancion=' + song.id, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error
+                });
+                return;
+            }
+            Swal.fire({
+                icon: 'success',
+                title: 'Canción eliminada',
+                text: 'La canción ha sido eliminada de la playlist'
+            })
+            .then(() => {
+                setIsModalVisible(false);
+                const selectedPlaylist = playList.nombre;
+                localStorage.setItem('selectedPlaylist', selectedPlaylist);
+                const newSongList = playList.canciones.filter(cancion => cancion.id !== song.id);
+                localStorage.setItem('playList', JSON.stringify({ ...playList, canciones: newSongList }));
+                window.location.reload();
+            });
+        })
+        .catch(error => console.error(error));
+    };
 
     const handleAddToPlaylist = () => {
-        setDropdownVisible(false);
         setIsModalVisible(true);
     };
 
     const handleCloseModal = () => {
         setIsModalVisible(false);
     };
-
-    const playlists = [
-        { id: 1, name: 'Playlist 1' },
-        { id: 2, name: 'Playlist 2' },
-        { id: 3, name: 'Playlist 3' },
-    ];
 
     return (
         <>
@@ -69,17 +119,19 @@ const Song = ({ index, song, songs, likedSongs, toggleLike, darkMode, handleSong
                         />
                     </button>
                 </td>
-                <td className="p-2 text-sm w-16 text-center relative" ref={dropdownRef}>
-                    <button onClick={(event) => { event.stopPropagation(); toggleDropdown(); }}>
-                        <HiOutlineDotsVertical className="w-6 h-6 text-gray-400 cursor-pointer" />
-                    </button>
-                    {dropdownVisible && (
-                        <div className={`absolute top-full right-0 mt-2 rounded-lg shadow-lg w-48 z-50 ${darkMode ? 'bg-inputBackground text-white border-gray-100' : 'bg-white text-gray-800 border-gray-300'}`}>
-                            <p className={`px-4 py-2 cursor-pointer ${darkMode ? 'hover:bg-secondaryBackground' : 'hover:bg-gray-100'}`} onClick={handleAddToPlaylist}>Agregar a playlist</p>
-                            <p className={`px-4 py-2 cursor-pointer ${darkMode ? 'hover:bg-secondaryBackground' : 'hover:bg-gray-100'}`}>Eliminar de la playlist</p>
-                        </div>
-                    )}
-                </td>
+                {!playList ? (
+                    <td className="p-2 text-sm w-16 text-center relative" ref={dropdownRef}>
+                        <button onClick={(event) => { event.stopPropagation(); handleAddToPlaylist(); }}>
+                            <FaPlus className="w-6 h-6 text-gray-400 cursor-pointer" />
+                        </button>
+                    </td>
+                ) : (
+                    <td className="p-2 text-sm w-16 text-center relative" ref={dropdownRef}>
+                        <button onClick={(event) => { event.stopPropagation(); handleDelSongFromPlaylist(playList.id); }}>
+                            <FaTrash className="w-6 h-6 text-gray-400 cursor-pointer" />
+                        </button>
+                    </td>
+                )}
             </tr>
             {isModalVisible && (
                 <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -89,13 +141,16 @@ const Song = ({ index, song, songs, likedSongs, toggleLike, darkMode, handleSong
                         <ul>
                             {playlists.map(playlist => (
                                 <li key={playlist.id} className="py-2">
-                                    <button className="w-full text-left">
-                                        {playlist.name}
+                                    <button 
+                                        className="w-full text-left"
+                                        onClick={() => handleAddSongToPlaylist(playlist.id)}
+                                    >
+                                        {playlist.nombre}
                                     </button>
                                 </li>
                             ))}
                         </ul>
-                        <button className="absolute top-2 right-2 text-gray-500 dark:text-gray-300" onClick={handleCloseModal}>X</button>
+                        <button className="absolute top-2 right-2 text-gray-500 dark:text-gray-300" onClick={handleCloseModal}> <FaWindowClose /> </button>
                     </div>
                 </div>
             )}

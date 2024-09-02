@@ -74,7 +74,8 @@ const NewPlayList = ({ darkMode, setActivePanel }) => {
                             setDesc('');
                             setPhoto(null);
 
-                            setActivePanel('PlayList', name);
+                            setActivePanel('Home');
+                            window.location.reload();
                         }
                     });
                 }
