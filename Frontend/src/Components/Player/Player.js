@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { FaBackward, FaPlay, FaPause, FaForward, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
 import './Player.css';
 
-const Player = ({ rute, onSongEnd }) => {
+const Player = ({ rute, onSongEnd, onBackward }) => {
     const [song, setSong] = useState({});
     const [progress, setProgress] = useState(0);
     const [volume, setVolume] = useState(100);
@@ -174,11 +174,15 @@ const Player = ({ rute, onSongEnd }) => {
             </div>
             <div className="flex flex-col items-center space-y-2 mb-5">
                 <div className="flex items-center space-x-4">
-                    <FaBackward className="text-lg cursor-pointer" />
+                    <button className="p-2" onClick={onBackward}>
+                        <FaBackward className="text-lg cursor-pointer" />
+                    </button>
                     <button className="p-2" onClick={togglePlayPause}>
                         {isPlaying ? <FaPause className="text-2xl" /> : <FaPlay className="text-2xl" />}
                     </button>
-                    <FaForward className="text-lg cursor-pointer" />
+                    <button className="p-2" onClick={onSongEnd}>
+                        <FaForward className="text-lg cursor-pointer" />
+                    </button>
                 </div>
                 <div className="flex items-center justify-between w-full mb-2" style={{ position: 'relative', width: '40rem' }}>
                     <span className="text-sm absolute left-0 -top-5">{currentTime}</span>

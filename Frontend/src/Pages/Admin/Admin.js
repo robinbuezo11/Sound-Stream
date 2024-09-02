@@ -120,6 +120,14 @@ const Admin = ({ userName }) => {
         localStorage.setItem('currentSong', songList[nextIndex].cancion);
     };
 
+    const handleBack = () => {
+        const previousIndex = playingSongIndex === 0 ? songList.length - 1 : playingSongIndex - 1;
+        setPlayingSongIndex(previousIndex);
+        setCurrentSong(songList[previousIndex].cancion);
+        localStorage.setItem('playingSongIndex', previousIndex);
+        localStorage.setItem('currentSong', songList[previousIndex].cancion);
+    };
+
     // Mostrar el panel desde el que se llama al perfil
     const onCloseProfilePanel = () => {
         console.log('Cerrando panel de perfil...');
@@ -172,7 +180,7 @@ const Admin = ({ userName }) => {
             </div>
             <div className={`fixed bottom-0 w-full p-4 ${darkMode ? 'bg-secondaryBackground text-colorText' : 'bg-gray-300 text-gray-700'}`} style={{ height: '5.5rem' }}>
                 <div className="flex items-center justify-between mb-2">
-                    <Player rute={currentSong} onSongEnd={handleSongEnd} />
+                    <Player rute={currentSong} onSongEnd={handleSongEnd} onBackward={handleBack} />
                 </div>
             </div>
         </div>
